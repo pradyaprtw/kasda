@@ -51,15 +51,100 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Card Total PFK -->
+                       <div class="col-lg-3 col-md-6 mb-4">
+                           <div class="card border-left-warning shadow h-100 py-2">
+                               <div class="card-body">
+                                   <div class="row no-gutters align-items-center">
+                                       <div class="col mr-2">
+                                           <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total PFK Bulan Ini</div>
+                                           <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($rekapBulanan['totalPfk'], 2, ',', '.') }}</div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
 
-                         <!-- Card Total PFK -->
+                        <!-- Card Total Bruto Hari Ini -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="card border-left-danger shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Bruto Hari Ini</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($rekapBulanan['brutoSemua'], 2, ',', '.') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                         <!-- Card Total PPN -->
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total PFK Bulan Ini</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($rekapBulanan['totalPfk'], 2, ',', '.') }}</div>
+                                            <div class="text-xs font-weight-bold text-black text-uppercase mb-1">Total PPN Hari Ini</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($rekapBulanan['totalPPN'], 2, ',', '.') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Card Total PPH 21-->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-black text-uppercase mb-1">Total PPH 21 Hari Ini</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($rekapBulanan['totalPPH21'], 2, ',', '.') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Card Total PPH 22-->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-black text-uppercase mb-1">Total PPH 22 Hari Ini</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($rekapBulanan['totalPPH22'], 2, ',', '.') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Card Total PPH 23 -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-black text-uppercase mb-1">Total PPH 23 Hari Ini</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($rekapBulanan['totalPPH23'], 2, ',', '.') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Card Total PPH 4-->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-black text-uppercase mb-1">Total PPH 4 Hari Ini</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($rekapBulanan['totalPPH4'], 2, ',', '.') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -79,6 +164,7 @@
                                 </div>
                             </div>
                         </div>
+
 
                          <!-- Card Rekap Akhir -->
                         <div class="col-lg-3 col-md-6 mb-4">

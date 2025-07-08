@@ -147,8 +147,22 @@ class Sp2d extends Component
         $sp2d = SP2DModel::with(['penerima', 'instansi'])
             ->where(function ($query) {
                 $query->where('nomor_sp2d', 'like', '%' . $this->search . '%')
-                      ->orWhere('jenis_sp2d', 'like', '%' . $this->search . '%')
-                      ->orWhereHas('penerima', function ($q) {
+                      ->orWhere('jenis_sp2d', 'like', '%' . $this->search . '%');
+
+                        // Cek apakah search berupa tanggal (format: dd-mm-yyyy)
+                        // Mengecek apakah input pencarian ($this->search) memiliki format tanggal 'dd-mm-yyyy'.
+                        // Jika ya, memecah tanggal menjadi array berdasarkan tanda '-'.
+                        // Jika jumlah bagian tanggal tepat 3 (hari, bulan, tahun), maka tanggal diformat ulang menjadi 'yyyy-mm-dd'.
+                        // Query kemudian menambahkan kondisi pencarian berdasarkan tanggal pada kolom 'created_at' menggunakan format baru tersebut.
+                        if (preg_match('/^\d{2}-\d{2}-\d{4}$/', $this->search)) {
+                            $dateParts = explode('-', $this->search);
+                            if (count($dateParts) === 3) {
+                                $formattedDate = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
+                                $query->orWhereDate('created_at', $formattedDate);
+                            }
+                        }       
+                                       
+                        $query->orWhereHas('penerima', function ($q) {
                           $q->where('nama_penerima', 'like', '%' . $this->search . '%');
                       })
                       ->orWhereHas('instansi', function ($q) {

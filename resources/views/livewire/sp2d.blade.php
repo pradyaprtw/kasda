@@ -21,7 +21,7 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
                 <input type="text" wire:model.live.debounce.300ms="search" class="form-control"
-                    placeholder="Cari No. SP2D, Penerima, Instansi...">
+                    placeholder="Cari No. SP2D, Penerima, Instansi, Tanggal...">
             </div>
         </div>
     </div>
@@ -33,8 +33,8 @@
                 <thead class="table-dark text-center">
                     <tr>
                         <th scope="col">No</th>
-                        <th scope="col">Nomor Sp2d</th>
-                        <th scope="col">Tanggal</th>
+                        <th scope="col">Nomor/Tanggal SP2D</th>
+                        <th scope="col">Tanggal Berkas Masuk</th>
                         <th scope="col">Jenis Sp2d</th>
                         <th scope="col">Keterangan</th>
                         <th scope="col">Nama CV/Penerima</th>
@@ -58,8 +58,8 @@
                     @forelse ($sp2d as $index => $ds)
                         <tr>
                             <th scope="row" class="text-center">{{ $sp2d->firstItem() + $index }}</th>
-                            <td>{{ $ds->nomor_sp2d }}</td>
-                            <td>{{ \Carbon\Carbon::parse($ds->tanggal_sp2d)->format('d/m/Y') }}</td>
+                            <td>{{ $ds->nomor_sp2d . '/' . \Carbon\Carbon::parse($ds->tanggal_sp2d)->format('d-m-Y')}}</td>
+                            <td>{{ \Carbon\Carbon::parse($ds->created_at)->format('d-m-Y') }}</td>
                             <td>{{ $ds->jenis_sp2d }}</td>
                             <td>{{ $ds->keterangan }}</td>
                             <td>{{ $ds->penerima->nama_penerima ?? '-' }}</td>

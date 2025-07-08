@@ -43,11 +43,29 @@ class HomeController extends Controller
             ->whereMonth('created_at', now()->month)
             ->where('jenis_sp2d', 'PFK')
             ->sum('netto');
+
+        $totalPPN = SP2D::whereDate('created_at', now()->toDateString())
+            ->sum('ppn');
+
+        $totalPPH21 = SP2D::whereDate('created_at', now()->toDateString())
+            ->sum('pph_21');
+
+        $totalPPH22 = SP2D::whereDate('created_at', now()->toDateString())
+            ->sum('pph_22');
+
+        $totalPPH23 = SP2D::whereDate('created_at', now()->toDateString())
+            ->sum('pph_23');
+
+        $totalPPH4 = SP2D::whereDate('created_at', now()->toDateString())
+            ->sum('pph_4');
         
         $nettoHariIni = SP2D::whereDate('created_at', now()->toDateString())
             ->sum('netto');
         
         $nettoSemua = SP2D::sum('netto');
+
+        $brutoSemua = SP2D::whereDate('created_at', now()->toDateString())
+            ->sum('brutto');
 
         $rekapAkhir = $nettoBulanIni - $nettoBulanLalu - $totalPfk;
 
@@ -58,6 +76,12 @@ class HomeController extends Controller
             'rekapAkhir' => $rekapAkhir,
             'nettoHariIni' => $nettoHariIni,
             'nettoSemua' => $nettoSemua,
+            'brutoSemua' => $brutoSemua,
+            'totalPPN' => $totalPPN,
+            'totalPPH21' => $totalPPH21,
+            'totalPPH22' => $totalPPH22,
+            'totalPPH23' => $totalPPH23,
+            'totalPPH4' => $totalPPH4,
         ];
 
        
