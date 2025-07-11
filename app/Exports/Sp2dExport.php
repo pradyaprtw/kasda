@@ -38,23 +38,25 @@ class Sp2dExport implements FromQuery, WithHeadings, WithMapping
      */
     public function headings(): array
     {
+        // Header untuk file Excel
+        // Pastikan nama-nama ini sesuai dengan kolom yang ada di database SP2D
 
         return[
-                'nomor_sp2d',
-                'tanggal_sp2d',
-                'jenis_sp2d',
-                'keterangan',
-                'Penerima',
-                'Instansi',
-                'brutto',
-                'ppn',
-                'pph_21',
-                'pph_22',
-                'pph_23',
-                'pph_4',
-                'no_bg',
-                'no_rek',
-                'netto'
+                'Nomor SP2D',
+                'Tanggal SP2D',
+                'Jenis SP2D',
+                'Keterangan',
+                'Nama CV/Penerima',
+                'Nama Instansi',
+                'Bruto',
+                'PPN',
+                'PPH 21',
+                'PPH 22',
+                'PPH 23',
+                'PPH 4',
+                'No BG',
+                'Rekening',
+                'Netto'
         ];
     }
 
