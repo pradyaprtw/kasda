@@ -49,7 +49,7 @@ class Penerima extends Component
         if($this->id){
             $penerima = PenerimaModel::find($this->id);
             $penerima->update($validatedData);
-            session()->flash('message', 'Data Penerima berhasil diperbarui!');
+            session()->flash('message', 'Data penerima berhasil diperbarui!');
             $this->closeModal();
         }
     }
@@ -57,7 +57,7 @@ class Penerima extends Component
     public function delete($id)
     {
         PenerimaModel::find($id)->delete();
-        session()->flash('message', 'Data berhasil dihapus!');
+        session()->flash('message', 'Data penerima berhasil dihapus!');
     }
 
     public function closeModal()
@@ -70,6 +70,7 @@ class Penerima extends Component
     public function render()
     {
         $penerima = PenerimaModel::query()
+            ->orderBy('nama_penerima', 'asc')
             ->where(function ($query) {
                 $query->where('nama_penerima', 'like', '%' . $this->search . '%');
             })

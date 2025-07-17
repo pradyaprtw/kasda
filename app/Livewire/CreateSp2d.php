@@ -13,7 +13,7 @@ class CreateSp2d extends Component
     public $instansi;
     public $penerima;
     public $users;
-   
+
 
     public $nomor_sp2d;
     public $tanggal_sp2d;
@@ -31,8 +31,10 @@ class CreateSp2d extends Component
     public $no_rek;
     public $id_user;
     // public $netto;
-  
-    
+
+    public $showCreatePenerima = false;
+    public $nama_penerima_baru;
+
     public function render()
     {
         return view('livewire.create-sp2d');
@@ -43,18 +45,18 @@ class CreateSp2d extends Component
         $this->instansi = Instansi::all();
         $this->penerima = Penerima::all();
         $this->users = User::all();
-
     }
 
-    
-    private function resetInputFields(){
+
+    private function resetInputFields()
+    {
         $this->nomor_sp2d = '';
         $this->tanggal_sp2d = '';
         $this->jenis_sp2d = '';
         $this->keterangan = '';
         $this->id_penerima = '';
         $this->id_instansi = '';
-        $this->brutto = ''; 
+        $this->brutto = '';
         $this->ppn = '';
         $this->pph_21 = '';
         $this->pph_22 = '';
@@ -63,12 +65,22 @@ class CreateSp2d extends Component
         $this->no_bg = '';
         $this->no_rek = '';
         $this->id_user = '';
-        // $this->dispatch('reset-tom-select');
-        
+
+        $this->dispatch('reset-select2'); // untuk reset select2
     }
 
-    public function store(){
-        $rules = [
+
+    public function store()
+    {
+        // Jika input baru (bukan ID), buat penerima baru
+        if (!is_numeric($this->id_penerima)) {
+            $newPenerima = Penerima::create([
+                'nama_penerima' => $this->id_penerima
+            ]);
+            $this->id_penerima = $newPenerima->id;
+        }
+
+        $validated = $this->validate([
             'nomor_sp2d' => 'required|string|max:255',
             'tanggal_sp2d' => 'required|date',
             'jenis_sp2d' => 'required|string|max:255',
@@ -84,42 +96,38 @@ class CreateSp2d extends Component
             'no_bg' => 'nullable|numeric',
             'no_rek' => 'nullable|string|max:255',
             'id_user' => 'nullable|exists:users,id',
-        ];
-        $validated = $this->validate($rules);
-        // dd($validated);
-
-        // Cek apakah nomor_sp2d sudah ada
-        if (\App\Models\SP2D::where('nomor_sp2d', $validated['nomor_sp2d'])->exists()) {
-            session()->flash('error', 'Nomor SP2D sudah ada, silakan gunakan nomor lain.');
-            return;
-        }
-
-        // Cek apakah nomor_bg sudah ada
-        if (\App\Models\SP2D::where('no_bg', $validated['no_bg'])->exists()) {
-            session()->flash('error', 'Nomor BG sudah ada, silakan gunakan nomor lain.');
-            return;
-        }
+        ]);
 
         $validated['id_user'] = auth()->id();
         SP2D::create($validated);
 
-
         $this->resetInputFields();
         session()->flash('message', 'Data SP2D berhasil ditambahkan!');
         return redirect()->route('sp2d');
+    }
 
 
-        // try {
-        //     SP2D::create($validated);
-        //     $this->resetInputFields();
-        //     session()->flash('message', 'Data SP2D berhasil ditambahkan!');
-            
-        //     // Emit event untuk refresh komponen lain jika perlu
-        //     $this->dispatch('sp2dCreated');
-            
-        //     return redirect()->route('sp2d');
-        // } catch (\Exception $e) {
-        //     session()->flash('error', 'Gagal menyimpan data: ' . $e->getMessage());
-        // }
+    public function simpanPenerimaBaru()
+    {
+        $this->validate([
+            'nama_penerima_baru' => 'required|string|max:255',
+        ]);
+
+        $penerima = Penerima::create([
+            'nama_penerima' => $this->nama_penerima_baru,
+        ]);
+
+        // Set ke dropdown
+        $this->id_penerima = $penerima->id;
+
+        // Perbarui list penerima
+        $this->penerima = Penerima::all();
+
+        // Kosongkan form input penerima baru
+        $this->nama_penerima_baru = '';
+        $this->showCreatePenerima = false;
+
+        // Reset TomSelect jika pakai JS select
+        $this->dispatch('reset-tom-select');
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Login extends Component
 {
-    public $email;
+    public $username;
     public $password;
 
     public function render()
@@ -20,7 +20,7 @@ class Login extends Component
     public function rules()
     {
         return [
-            'email' => 'required|email|max:255',
+            'username' => 'required|string|max:255',
             'password' => 'required|string|min:8',
         ];
     }
@@ -29,12 +29,12 @@ class Login extends Component
     {
         $this->validate();
 
-        if (auth()->attempt(['email' => $this->email, 'password' => $this->password], true)) {
+        if (auth()->attempt(['username' => $this->username, 'password' => $this->password], true)) {
             return redirect()->intended();
         }
 
         return redirect()->to(RouteServiceProvider::HOME)
-            ->withErrors(['email' => 'The provided credentials do not match our records.'])
-            ->withInput(['email' => $this->email]);
+            ->withErrors(['username' => 'The provided credentials do not match our records.'])
+            ->withInput(['username' => $this->username]);
     }
 }

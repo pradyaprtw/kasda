@@ -30,7 +30,7 @@ class CreatePenerima extends Component
         PenerimaModel::create($validated);
 
         $this->resetInputFields();
-        session()->flash('message', 'Data Penerima berhasil ditambahkan!');
+        session()->flash('message', 'Data penerima berhasil ditambahkan!');
         return redirect()->route('penerima');
     }
 

@@ -2,15 +2,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="createInstansiLabel">Tambah Sp2d</h1>
+                <h1 class="modal-title fs-5" id="createInstansiLabel">Tambah Instansi</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            {{-- Display success message --}}
-        @if (session()->has('message'))
-                <div class="alert alert-success mt-3 mx-3">
-                        {{ session('message') }}
-                </div>
-        @endif
             <div class="modal-body">
                 <form wire:submit.prevent="store">
                         <div class="mb-3">
