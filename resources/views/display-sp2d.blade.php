@@ -11,40 +11,46 @@
             </div>
         @endif
 
-        @if (session()->has('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="d-flex justify-content-between">
+            <div class="mb-3">
+                <form action="{{ route('sp2d.export') }}" method="GET">
+                    <h5>Export harian SP2D</h5>
+                    <div class="mb-3">
+                        <label for="created_at" class="form-label">Pilih tanggal</label>
+                        <input type="date" class="form-control" id="created_at" name="created_at" style="border-color: black" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-cloud-arrow-down me-1"></i>Export
+                    </button>
+                </form>
             </div>
-        @endif
 
+            <div class="mb-3">
+                <form action="{{ route('sp2d.rekap.export') }}" method="GET">
+                    <h5>Export Rekap SP2D</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="start_date" class="form-label">Tanggal Mulai</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" style="border-color: black" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_date" class="form-label">Tanggal Selesai</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" style="border-color: black" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-3">
+                        <i class="bi bi-cloud-arrow-down me-1"></i>Export
+                    </button>
+                </form>
+            </div>
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="d-flex justify-content-start">
-                    <div class="mb-3">
-
-                        <form action="{{ route('sp2d.export') }}" method="GET">
-                            <h5>Export data SP2D</h5>
-                            <div class="mb-3">
-                                <label for="created_at" class="form-label">Pilih tanggal</label>
-                                <input type="date" class="form-control" id="created_at" name="created_at"
-                                    style="border-color: black" required>
-                            </div>
-                            <button type="submit" class="btn btn-success"><i
-                                    class="bi bi-cloud-arrow-down me-1"></i>Export</button>
-                    </div>
-                    </form>
-                </div>
-                {{-- <div class="d-flex justify-content-end">
-                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createSp2d">
-                    <i class="bi bi-plus-circle me-1"></i> Tambah SP2D
-                </button>
-            </div> --}}
+            </div>
         </div>
-    </div>
-    <div class="mb-3">
-        @livewire('CreateSp2d')
-    </div>
-    @livewire('sp2d')
+        <div class="mb-3">
+            @livewire('CreateSp2d')
+        </div>
+        @livewire('sp2d')
     </div>
 @endsection

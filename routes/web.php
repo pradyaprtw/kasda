@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/penerima', [PenerimaController::class, 'index'])->name('penerima');
     Route::get('/instansi', [InstansiController::class, 'index'])->name('instansi');
     Route::get('/sp2d/export', [DisplayController::class, 'exportExcel'])->name('sp2d.export');
+    Route::get('/sp2d/rekap/export', [DisplayController::class, 'exportRekapExcel'])->name('sp2d.rekap.export');
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

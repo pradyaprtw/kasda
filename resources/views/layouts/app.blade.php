@@ -27,6 +27,11 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
+    <style>
+        .form-control, .form-select{
+            border-color: black;
+        }
+    </style>
 </head>
 
 <body>

@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-md-4">
             <div class="card">
-                <div class="card-header">Register</div>
+                <div class="card-header">Tambah Akun</div>
                 <div class="card-body">
                     <form wire:submit.prevent="register">
                         <div class="form-group">

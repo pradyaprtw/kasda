@@ -30,10 +30,6 @@ class CreateSp2d extends Component
     public $no_bg;
     public $no_rek;
     public $id_user;
-    // public $netto;
-
-    public $showCreatePenerima = false;
-    public $nama_penerima_baru;
 
     public function render()
     {
@@ -79,6 +75,18 @@ class CreateSp2d extends Component
             ]);
             $this->id_penerima = $newPenerima->id;
         }
+        
+        // Cek jika nomor SP2D sudah ada
+        if (SP2D::where('nomor_sp2d', $this->nomor_sp2d)->exists()) {
+            session()->flash('error', 'Nomor SP2D "' . $this->nomor_sp2d . '" sudah ada!');
+            return;
+        }
+    
+        // Cek jika No BG sudah ada
+        if (SP2D::where('no_bg', $this->no_bg)->exists()) {
+            session()->flash('error', 'Nomor BG "' . $this->no_bg . '" sudah ada!');
+            return;
+        }
 
         $validated = $this->validate([
             'nomor_sp2d' => 'required|string|max:255',
@@ -97,6 +105,7 @@ class CreateSp2d extends Component
             'no_rek' => 'nullable|string|max:255',
             'id_user' => 'nullable|exists:users,id',
         ]);
+    
 
         $validated['id_user'] = auth()->id();
         SP2D::create($validated);
@@ -106,28 +115,4 @@ class CreateSp2d extends Component
         return redirect()->route('sp2d');
     }
 
-
-    public function simpanPenerimaBaru()
-    {
-        $this->validate([
-            'nama_penerima_baru' => 'required|string|max:255',
-        ]);
-
-        $penerima = Penerima::create([
-            'nama_penerima' => $this->nama_penerima_baru,
-        ]);
-
-        // Set ke dropdown
-        $this->id_penerima = $penerima->id;
-
-        // Perbarui list penerima
-        $this->penerima = Penerima::all();
-
-        // Kosongkan form input penerima baru
-        $this->nama_penerima_baru = '';
-        $this->showCreatePenerima = false;
-
-        // Reset TomSelect jika pakai JS select
-        $this->dispatch('reset-tom-select');
-    }
 }
