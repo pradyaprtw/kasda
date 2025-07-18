@@ -4,6 +4,12 @@
         Tambah Data SP2D
     </div>
     <div class="card-body">
+        @if (session()->has('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <form wire:submit.prevent="store">
             <input type="hidden" wire:model="id_user" value="{{ auth()->user()->id }}">
             <div class="mb-3">
@@ -147,32 +153,31 @@
             </div>
         </form>
     </div>
-@push('scripts')
-<script>
-    document.addEventListener('livewire:navigated', function() {
-        // Inisialisasi Select2
-        $('#select-penerima').select2({
-            placeholder: 'Cari atau pilih penerima...',
-            tags: true,
-            width: '100%'
-        }).on('change', function() {
-            @this.set('id_penerima', $(this).val());
-        });
+    @push('scripts')
+        <script>
+            document.addEventListener('livewire:navigated', function() {
+                // Inisialisasi Select2
+                $('#select-penerima').select2({
+                    placeholder: 'Cari atau pilih penerima...',
+                    tags: true,
+                    width: '100%'
+                }).on('change', function() {
+                    @this.set('id_penerima', $(this).val());
+                });
 
-        $('#select-instansi').select2({
-            placeholder: 'Cari atau pilih instansi...',
-            width: '100%'
-        }).on('change', function() {
-            @this.set('id_instansi', $(this).val());
-        });
+                $('#select-instansi').select2({
+                    placeholder: 'Cari atau pilih instansi...',
+                    width: '100%'
+                }).on('change', function() {
+                    @this.set('id_instansi', $(this).val());
+                });
 
-        // Reset Select2 ketika form direset
-        Livewire.on('reset-select2', () => {
-            $('#select-penerima').val('').trigger('change');
-            $('#select-instansi').val('').trigger('change');
-        });
-    });
-</script>
-@endpush
+                // Reset Select2 ketika form direset
+                Livewire.on('reset-select2', () => {
+                    $('#select-penerima').val('').trigger('change');
+                    $('#select-instansi').val('').trigger('change');
+                });
+            });
+        </script>
+    @endpush
 </div>
-

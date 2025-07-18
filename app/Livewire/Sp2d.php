@@ -131,7 +131,8 @@ class Sp2d extends Component
     public function delete($id)
     {
 
-        $sp2d=SP2DModel::find($id)->delete();
+        $sp2d=SP2DModel::find($id);
+        $sp2d->delete();
         session()->flash('message', 'Nomor SP2D ' . $sp2d->nomor_sp2d . ' berhasil dihapus.');
     }
 

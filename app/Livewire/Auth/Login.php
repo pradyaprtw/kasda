@@ -29,12 +29,21 @@ class Login extends Component
     {
         $this->validate();
 
-        if (auth()->attempt(['username' => $this->username, 'password' => $this->password], true)) {
-            return redirect()->intended();
+        // Coba cari user berdasarkan username
+        $user = \App\Models\User::where('username', $this->username)->first();
+
+        if (!$user) {
+            session()->flash('error', 'Username tidak ditemukan.');
+            return;
         }
 
-        return redirect()->to(RouteServiceProvider::HOME)
-            ->withErrors(['username' => 'The provided credentials do not match our records.'])
-            ->withInput(['username' => $this->username]);
+        if (!\Hash::check($this->password, $user->password)) {
+            session()->flash('error', 'Password salah.');
+            return;
+        }
+
+        // Kalau semua cocok, login
+        Auth::login($user, true);
+        return redirect()->intended();
     }
 }

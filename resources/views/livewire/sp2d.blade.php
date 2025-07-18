@@ -32,7 +32,6 @@
                         <th scope="col">PPH 4</th>
                         <th scope="col">No BG</th>
                         <th scope="col">Netto</th>
-                        {{-- <th scope="col">Petugas Input</th> --}}
                         <th scope="col">Status</th>
                         <th scope="col">Aksi</th>
                     </tr>
@@ -42,7 +41,8 @@
                     @forelse ($sp2d as $index => $ds)
                         <tr>
                             <th scope="row" class="text-center">{{ $sp2d->firstItem() + $index }}</th>
-                            <td>{{ $ds->nomor_sp2d . '/' . \Carbon\Carbon::parse($ds->tanggal_sp2d)->format('d-m-Y')}}</td>
+                            <td>{{ $ds->nomor_sp2d . '/' . \Carbon\Carbon::parse($ds->tanggal_sp2d)->format('d-m-Y') }}
+                            </td>
                             <td>{{ \Carbon\Carbon::parse($ds->created_at)->format('d-m-Y') }}</td>
                             <td>{{ $ds->jenis_sp2d }}</td>
                             <td>{{ $ds->keterangan }}</td>
@@ -140,8 +140,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="editSp2dLabel">Edit SP2D</h1>
-                        <button type="button" class="btn-close" wire:click="closeModal"
-                            aria-label="Close"></button>
+                        <button type="button" class="btn-close" wire:click="closeModal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         @if (session()->has('message'))
