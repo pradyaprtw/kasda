@@ -143,7 +143,7 @@
                 </div>
             </div>
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
+                <button type="submit" class="btn btn-success" wire:loading.attr="disabled">
                     <span wire:loading.remove wire:target="store">Simpan</span>
                     <span wire:loading wire:target="store">
                         <span class="spinner-border spinner-border-sm me-1"></span>

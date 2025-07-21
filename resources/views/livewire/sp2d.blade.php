@@ -11,11 +11,11 @@
     </div>
     {{-- ========================================================= --}}
 
-    <div class="my-3 p-3 bg-body rounded shadow-sm">
+    <div class="my-3 p-3 bg-body rounded shadow-sm border border-black">
         <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle mb-0">
                 <thead class="table-dark text-center">
-                    <tr>
+                    <tr class="border border-white">
                         <th scope="col">No</th>
                         <th scope="col">Nomor/Tanggal SP2D</th>
                         <th scope="col">Tanggal Berkas Masuk</th>
@@ -39,10 +39,11 @@
                 <tbody>
                     {{-- ==================== TAMPILKAN DATA SP2D ==================== --}}
                     @forelse ($sp2d as $index => $ds)
-                        <tr>
+                        <tr class="text-center border border-black">
+                            {{-- Menampilkan nomor urut baris berdasarkan halaman --}}
                             <th scope="row" class="text-center">{{ $sp2d->firstItem() + $index }}</th>
-                            <td>{{ $ds->nomor_sp2d . '/' . \Carbon\Carbon::parse($ds->tanggal_sp2d)->format('d-m-Y') }}
-                            </td>
+                            {{-- Menampilkan nomor SP2D dan tanggal SP2D dalam format 'dd-mm-yyyy' --}}
+                            <td>{{ $ds->nomor_sp2d . '/' . \Carbon\Carbon::parse($ds->tanggal_sp2d)->format('d-m-Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($ds->created_at)->format('d-m-Y') }}</td>
                             <td>{{ $ds->jenis_sp2d }}</td>
                             <td>{{ $ds->keterangan }}</td>
