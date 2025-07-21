@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="d-flex justify-content-end">
-                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createPenerima">
+                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createPenerima">
                     <i class="bi bi-plus-circle me-1"></i> Tambah Penerima
                 </button>
             </div>

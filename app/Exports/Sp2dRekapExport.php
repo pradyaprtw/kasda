@@ -37,6 +37,9 @@ class Sp2dRekapExport implements WithMultipleSheets
             }
         } else {
             // Jika ada data, buat sheet berdasarkan tanggal yang ada
+            // Looping untuk setiap tanggal yang ditemukan
+            // Buat sheet untuk setiap tanggal menggunakan Sp2dExport
+            // Sp2dExport akan mengexport data SP2D berdasarkan tanggal yang diberikan
             foreach ($dates as $date) {
                 $sheets[] = new Sp2dExport($date);
             }
