@@ -39,8 +39,7 @@ return new class extends Migration
             $table->decimal('pph_22', 20, 2)->default(0)->nullable();
             $table->decimal('pph_23', 20, 2)->default(0)->nullable();
             $table->decimal('pph_4', 20, 2)->default(0)->nullable();
-            $table->bigInteger('no_bg')->unique();
-            
+            $table->string('no_bg', 20, 0)->unique();
             $table->timestamp('waktu_sesuai')->nullable();
 
             $table->timestamps(); // created_at, updated_at

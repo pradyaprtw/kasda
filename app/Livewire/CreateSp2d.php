@@ -105,8 +105,8 @@ class CreateSp2d extends Component
             'pph_22' => 'nullable|numeric|min:0',
             'pph_23' => 'nullable|numeric|min:0',
             'pph_4' => 'nullable|numeric|min:0',
-            'no_bg' => 'nullable|numeric',
-            'no_rek' => 'nullable|string|max:255', // bisa input baru
+            'no_bg' => 'nullable|string|unique:sp2d,no_bg|max:20',
+            'no_rek' => 'nullable|string|max:255',
             'id_user' => 'nullable|exists:users,id',
         ]);
 
