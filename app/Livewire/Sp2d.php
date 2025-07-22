@@ -83,7 +83,7 @@ class Sp2d extends Component
             'id_penerima' => 'required|exists:penerima,id',
             'no_rek' => 'required|string',
             'brutto' => 'required|numeric|min:0',
-            'no_bg' => 'required|integer',
+            'no_bg' => 'nullable|string|unique:sp2d,no_bg,' . $this->id,
             'ppn' => 'nullable|numeric|min:0',
             'pph_21' => 'nullable|numeric|min:0',
             'pph_22' => 'nullable|numeric|min:0',
