@@ -30,10 +30,13 @@ class CreateSp2d extends Component
     public $no_bg;
     public $no_rek;
     public $id_user;
+    public $daftarRekening;
 
     public function render()
     {
-        return view('livewire.create-sp2d');
+        return view('livewire.create-sp2d',[
+            'daftarRekening' => $this->daftarRekening,
+        ]);
     }
 
     public function mount()
@@ -41,6 +44,7 @@ class CreateSp2d extends Component
         $this->instansi = Instansi::all();
         $this->penerima = Penerima::all();
         $this->users = User::all();
+        $this->daftarRekening = SP2D::pluck('no_rek')->unique();
     }
 
 
@@ -75,14 +79,14 @@ class CreateSp2d extends Component
             ]);
             $this->id_penerima = $newPenerima->id;
         }
-        
-        // Cek jika nomor SP2D sudah ada
+
+        // Validasi unik nomor SP2D
         if (SP2D::where('nomor_sp2d', $this->nomor_sp2d)->exists()) {
             session()->flash('error', 'Nomor SP2D "' . $this->nomor_sp2d . '" sudah ada!');
             return;
         }
-    
-        // Cek jika No BG sudah ada
+
+        // Validasi unik No BG
         if (SP2D::where('no_bg', $this->no_bg)->exists()) {
             session()->flash('error', 'Nomor BG "' . $this->no_bg . '" sudah ada!');
             return;
@@ -102,17 +106,16 @@ class CreateSp2d extends Component
             'pph_23' => 'nullable|numeric|min:0',
             'pph_4' => 'nullable|numeric|min:0',
             'no_bg' => 'nullable|numeric',
-            'no_rek' => 'nullable|string|max:255',
+            'no_rek' => 'nullable|string|max:255', // bisa input baru
             'id_user' => 'nullable|exists:users,id',
         ]);
-    
 
         $validated['id_user'] = auth()->id();
+
         SP2D::create($validated);
 
         $this->resetInputFields();
         session()->flash('message', 'Data SP2D berhasil ditambahkan!');
         return redirect()->route('sp2d');
     }
-
 }

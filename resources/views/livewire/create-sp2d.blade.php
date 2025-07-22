@@ -91,18 +91,26 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="no_rek" class="form-label">No Rekening</label>
-                        <input type="text" class="form-control" id="no_rek" wire:model="no_rek" required>
+                    <div class="mb-3" wire:ignore>
+                        <label for="select-no-rek" class="form-label">Nomor Rekening</label>
+                        <select id="select-no-rek" class="form-control js-example-tags">
+                            <option value="">Cari atau masukkan No Rekening...</option>
+                            @foreach ($daftarRekening as $rek)
+                                <option value="{{ $rek }}">{{ $rek }}</option>
+                            @endforeach
+                        </select>
                     </div>
+                    @error('no_rek')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="brutto" class="form-label">Bruto</label>
-                        <input type="number" step="0.01" class="form-control" id="brutto" wire:model="brutto"
-                            required>
+                        <input type="number" step="0.01" class="form-control" id="brutto"
+                            wire:model="brutto" required>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -172,10 +180,19 @@
                     @this.set('id_instansi', $(this).val());
                 });
 
+                $('#select-no-rek').select2({
+                    placeholder: 'Cari atau masukkan No Rekening...',
+                    tags: true,
+                    width: '100%'
+                }).on('change', function() {
+                    @this.set('no_rek', $(this).val());
+                });
+
                 // Reset Select2 ketika form direset
                 Livewire.on('reset-select2', () => {
                     $('#select-penerima').val('').trigger('change');
                     $('#select-instansi').val('').trigger('change');
+                    $('#select-no-rek').val('').trigger('change');
                 });
             });
         </script>

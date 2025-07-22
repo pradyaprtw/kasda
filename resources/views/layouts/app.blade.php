@@ -68,7 +68,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link px-3 py-2 rounded {{ request()->is('instansi') ? 'text-primary fw-bold' : 'text-dark' }}" href="{{ route('instansi') }}">
-                                <i class="bi bi-building me-1"></i>{{ __('OPD') }}
+                                <i class="bi bi-building me-1"></i>{{ __('Instansi') }}
                             </a>
                         </li>
 
