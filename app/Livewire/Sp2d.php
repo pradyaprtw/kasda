@@ -148,6 +148,8 @@ class Sp2d extends Component
         $sp2d = SP2DModel::with(['penerima', 'instansi'])
             ->where(function ($query) {
                 $query->where('nomor_sp2d', 'like', '%' . $this->search . '%')
+                      ->orWhere('jenis_sp2d', 'like', '%' . $this->search . '%')
+                      ->orWhere('no_bg', 'like', '%' . $this->search . '%')
                       ->orWhere('jenis_sp2d', 'like', '%' . $this->search . '%');
 
                         // Cek apakah search berupa tanggal (format: dd-mm-yyyy)
