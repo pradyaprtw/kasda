@@ -173,9 +173,9 @@
                                         <label for="nomor_sp2d" class="form-label">Nomor SP2D</label>
                                         <input type="text"
                                             class="form-control @error('nomor_sp2d') is-invalid @enderror"
-                                            id="nomor_sp2d" wire:model="nomor_sp2d">
+                                            id="nomor_sp2d" wire:model="nomor_sp2d" required>
                                         @error('nomor_sp2d')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -248,9 +248,9 @@
                                         <label for="no_bg" class="form-label">No BG</label>
                                         <input type="text"
                                             class="form-control @error('no_bg') is-invalid @enderror" id="no_bg"
-                                            wire:model="no_bg">
+                                            wire:model="no_bg" required>
                                         @error('no_bg')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>

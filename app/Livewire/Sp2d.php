@@ -88,20 +88,35 @@ class Sp2d extends Component
 
     public function update()
     {
-        $validatedSp2dData = $this->validate([
-            'keterangan' => 'nullable|string',
-            'tanggal_sp2d' => 'required|date',
-            'jenis_sp2d' => 'required|string',
-            'id_instansi' => 'required|exists:instansi,id',
-            'id_penerima' => 'required|exists:penerima,id',
-            'brutto' => 'required|numeric|min:0',
-            'no_bg' => 'nullable|string|unique:sp2d,no_bg,' . $this->id,
-            'ppn' => 'nullable|numeric|min:0',
-            'pph_21' => 'nullable|numeric|min:0',
-            'pph_22' => 'nullable|numeric|min:0',
-            'pph_23' => 'nullable|numeric|min:0',
-            'pph_4' => 'nullable|numeric|min:0',
-        ]);
+        $validatedSp2dData = $this->validate(
+            [
+                'keterangan' => 'nullable|string',
+                'tanggal_sp2d' => 'required|date',
+                'jenis_sp2d' => 'required|string',
+                'id_instansi' => 'required|exists:instansi,id',
+                'id_penerima' => 'required|exists:penerima,id',
+                'brutto' => 'required|numeric|min:0',
+                'ppn' => 'nullable|numeric|min:0',
+                'pph_21' => 'nullable|numeric|min:0',
+                'pph_22' => 'nullable|numeric|min:0',
+                'pph_23' => 'nullable|numeric|min:0',
+                'pph_4' => 'nullable|numeric|min:0',
+                'nomor_sp2d' => [
+                    'required',
+                    'string',
+                    Rule::unique('sp2d', 'nomor_sp2d')->ignore($this->id),
+                ],
+                'no_bg' => [
+                    'nullable',
+                    'string',
+                    Rule::unique('sp2d', 'no_bg')->ignore($this->id),
+                ],
+            ],
+            [
+                'nomor_sp2d.unique' => 'Nomor SP2D ini sudah ada.',
+                'no_bg.unique' => 'Nomor BG ini sudah ada.',
+            ]
+        );
 
         if ($this->id) {
             $sp2d = SP2DModel::find($this->id);
