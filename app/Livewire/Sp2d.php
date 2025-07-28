@@ -95,17 +95,12 @@ class Sp2d extends Component
             'id_instansi' => 'required|exists:instansi,id',
             'id_penerima' => 'required|exists:penerima,id',
             'brutto' => 'required|numeric|min:0',
-            'ppn' => 'nullable|numeric',
-            'pph_21' => 'nullable|numeric',
-            'pph_22' => 'nullable|numeric',
-            'pph_23' => 'nullable|numeric',
-            'pph_4' => 'nullable|numeric',
-            'nomor_sp2d' => ['required', 'string', Rule::unique('sp2d')->ignore($this->id)],
-            'no_bg' => ['nullable', 'string', Rule::unique('sp2d')->ignore($this->id)],
-        ]);
-
-        $this->validate([
-            'no_rek' => 'required|string',
+            'no_bg' => 'nullable|string|unique:sp2d,no_bg,' . $this->id,
+            'ppn' => 'nullable|numeric|min:0',
+            'pph_21' => 'nullable|numeric|min:0',
+            'pph_22' => 'nullable|numeric|min:0',
+            'pph_23' => 'nullable|numeric|min:0',
+            'pph_4' => 'nullable|numeric|min:0',
         ]);
 
         if ($this->id) {
