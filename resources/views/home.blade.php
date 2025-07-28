@@ -1,7 +1,35 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
+        @if (session('info'))
+            <div class="alert alert-info">
+                {{ session('info') }}
+            </div>
+        @endif
+        {{-- NOTIFIKASI BARU: INFORMASI PENGHAPUSAN DATA --}}
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if ($cleanupFlag)
+            <div class="alert alert-warning">
+                <strong>⚠️ Data SP2D lebih dari 5 tahun siap dihapus sejak
+                    {{ \Carbon\Carbon::parse($cleanupFlag->tanggal_trigger)->format('d M Y') }} ⚠️</strong><br>
+                Apakah Anda ingin menghapusnya sekarang?
+                <div class="mt-2">
+                    <form action="{{ route('konfirmasi.hapus') }}" method="POST" class="d-inline">
+                        @csrf
+                        <input type="hidden" name="flag_id" value="{{ $cleanupFlag->id }}">
+                        <button type="submit" name="action" value="yes" class="btn btn-danger btn-sm">Ya,
+                            hapus</button>
+                        <button type="submit" name="action" value="later" class="btn btn-secondary btn-sm">Ingatkan
+                            Besok</button>
+                    </form>
+                </div>
+            </div>
+        @endif
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card shadow">
@@ -79,20 +107,20 @@
 
                         <!-- DETAIL PAJAK & BRUTO -->
                         <!--
-                            Bagian ini menampilkan detail-data lainnya yang relevan
-                            dengan transaksi SP2D. Data-data tersebut diambil dari
-                            variabel $rekapBulanan yang dihitung di controller.
+                                                    Bagian ini menampilkan detail-data lainnya yang relevan
+                                                    dengan transaksi SP2D. Data-data tersebut diambil dari
+                                                    variabel $rekapBulanan yang dihitung di controller.
 
-                            Data-data yang ditampilkan adalah:
-                            1. Bruto hari ini
-                            2. Total PPN hari ini
-                            3. Total PPH 21 hari ini
-                            4. Total PPH 22 hari ini
-                            5. Total PPH 23 hari ini
-                            6. Total PPH 4 hari ini
-                            7. Netto hari ini
-                            8. Total netto keseluruhan
-                        -->
+                                                    Data-data yang ditampilkan adalah:
+                                                    1. Bruto hari ini
+                                                    2. Total PPN hari ini
+                                                    3. Total PPH 21 hari ini
+                                                    4. Total PPH 22 hari ini
+                                                    5. Total PPH 23 hari ini
+                                                    6. Total PPH 4 hari ini
+                                                    7. Netto hari ini
+                                                    8. Total netto keseluruhan
+                                                -->
                         <h6 class="fw-bold text-center mt-5 mb-3">Detail Lainnya</h6>
                         <div class="row g-3">
                             @php

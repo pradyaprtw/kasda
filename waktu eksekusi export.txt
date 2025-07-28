@@ -1,0 +1,10 @@
+58k data pertahun =  12 menit
+
+3k data per bulan = 30 detik
+
+20k data pertahun = 9 menit
+
+100 data perhari = 10 detik
+
+semakin banyak datanya semakin lama eksekusi nya
+

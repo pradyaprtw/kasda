@@ -1,16 +1,12 @@
 @extends('layouts.app')
-
 @section('content')
-    <div class="container-fluid mt-4 ">
-        @if (session()->has('message'))
+    <div class="container-fluid mt-4">
+        @if (session()->has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('message') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-        <div class="create-wrapper mb-5">
-            @livewire('CreateSp2d')
-        </div>
-        @livewire('sp2d')
+        @livewire('export')
     </div>
 @endsection

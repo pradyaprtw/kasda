@@ -38,7 +38,7 @@ class HomeController extends Controller
         $nettoBulanLalu = SP2D::whereYear('created_at', now()->subMonth()->year)
             ->whereMonth('created_at', now()->subMonth()->month)
             ->sum('netto');
-            
+
         $totalPfk = SP2D::whereYear('created_at', now()->year)
             ->whereMonth('created_at', now()->month)
             ->where('jenis_sp2d', 'PFK')
@@ -58,10 +58,10 @@ class HomeController extends Controller
 
         $totalPPH4 = SP2D::whereDate('created_at', now()->toDateString())
             ->sum('pph_4');
-        
+
         $nettoHariIni = SP2D::whereDate('created_at', now()->toDateString())
             ->sum('netto');
-        
+
         $nettoSemua = SP2D::sum('netto');
 
         $brutoSemua = SP2D::whereDate('created_at', now()->toDateString())
@@ -84,19 +84,26 @@ class HomeController extends Controller
             'totalPPH4' => $totalPPH4,
         ];
 
-       
-    // === QUERY BARU UNTUK STATISTIK PETUGAS ===
+
+        // === QUERY BARU UNTUK STATISTIK PETUGAS ===
         $petugasStats = User::withCount(['logs as total_input_hari_ini' => function ($query) {
-                // Hitung log mereka dengan kondisi...
-                $query->where('aktivitas', 'like', '%Membuat SP2D baru%')
-                      ->whereDate('created_at', today());
-            }])
+            // Hitung log mereka dengan kondisi...
+            $query->where('aktivitas', 'like', '%Membuat SP2D baru%')
+                ->whereDate('created_at', today());
+        }])
             ->get();
+
+        $flag = DB::table('data_cleanup_flags')
+            ->where('flag_hapus', true)
+            ->latest('tanggal_trigger')
+            ->first();
+            
 
         // Kirim semua data yang sudah diproses ke view 'home.blade.php'
         return view('home', [
             'rekapBulanan' => $rekapBulanan,
             'petugasStats' => $petugasStats,
+            'cleanupFlag' => $flag
         ]);
     }
 }
