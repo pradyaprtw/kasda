@@ -6,6 +6,9 @@ use Livewire\Component;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DataCleanupLog;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class Login extends Component
 {
@@ -37,7 +40,7 @@ class Login extends Component
             return;
         }
 
-        if (!\Hash::check($this->password, $user->password)) {
+        if (!Hash::check($this->password, $user->password)) {
             session()->flash('error', 'Password salah.');
             return;
         }
@@ -45,5 +48,16 @@ class Login extends Component
         // Kalau semua cocok, login
         Auth::login($user, true);
         return redirect()->intended();
+    }
+
+    public function authenticated(Request $request, $user)
+    {
+        $recentCleanup = DataCleanupLog::whereDate('deleted_at', '>=', now()->subWeek())->latest()->first();
+
+        if ($recentCleanup) {
+            session()->flash('info', '📢 Data sebelum ' . $recentCleanup->deleted_before->format('d M Y') . ' telah dihapus otomatis.');
+        }
+
+        return redirect()->intended($this->redirectPath());
     }
 }

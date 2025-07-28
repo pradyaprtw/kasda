@@ -1,190 +1,209 @@
 <?php
 
+// File: App\Exports\Sp2dExport.php
+// [PERUBAHAN DILAKUKAN DI FILE INI]
+
 namespace App\Exports;
 
-use App\Models\SP2D;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithTitle;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\{
+    Exportable,
+    FromCollection,
+    ShouldAutoSize,
+    WithHeadings,
+    WithStyles,
+    WithEvents,
+    WithTitle
+};
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\{Alignment, Border};
+use Maatwebsite\Excel\Events\{AfterSheet, BeforeSheet};
 
-class Sp2dExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithEvents, WithTitle
+class Sp2dExport implements FromCollection, WithHeadings, WithTitle, ShouldAutoSize, WithStyles, WithEvents
 {
+
     use Exportable;
 
-    protected $created_at;
+    protected Collection $data;
+    protected array $totals;
+    protected string $date;
 
-    public function __construct(string $created_at)
+    public function __construct(Collection $data, array $totals, string $date)
     {
-        $this->created_at = $created_at;
+        $this->data = $data;
+        $this->totals = $totals;
+        $this->date = $date;
     }
 
     public function title(): string
     {
-        return Carbon::parse($this->created_at)->format('d-m-Y');
+        return Carbon::parse($this->date)->format('d-m-Y');
     }
 
-    public function query()
+    public function collection(): Collection
     {
-        return SP2D::query()->with(['penerima', 'instansi'])
-            ->whereDate('created_at', $this->created_at);
+        // [PERBAIKAN] Mengembalikan angka murni (float) agar bisa diformat di Excel.
+        // Hapus 'Rp' dan number_format().
+        return $this->data->map(function ($item, $key) {
+            $jumlah_potongan = $item->ppn + $item->pph_21 + $item->pph_22 + $item->pph_23 + $item->pph_4;
+
+            return [
+                'No' => $key + 1,
+                'Tanggal SP2D' => Carbon::parse($item->tanggal_sp2d)->format('d-m-Y'),
+                'Nomor SP2D' => ' ' . $item->nomor_sp2d, // Spasi untuk mencegah format angka otomatis
+                'Jenis SP2D' => $item->jenis_sp2d,
+                'Penerima' => $item->penerima->nama_penerima ?? 'N/A',
+                'Instansi' => $item->instansi->nama_instansi ?? 'N/A',
+                'Bruto' => (float)$item->brutto,
+                'PPN' => (float)$item->ppn,
+                'PPH 21' => (float)$item->pph_21,
+                'PPH 22' => (float)$item->pph_22,
+                'PPH 23' => (float)$item->pph_23,
+                'PPH 4' => (float)$item->pph_4,
+                'Jumlah Potongan' => (float)$jumlah_potongan,
+                'Netto' => (float)$item->netto,
+                'No BG' => $item->no_bg,
+                'No Rekening' => ' ' . ($item->penerima->no_rek ?? 'N/A'), // Spasi untuk mencegah format angka otomatis
+            ];
+        });
     }
+
 
     public function headings(): array
     {
+        // Mendefinisikan HANYA header tabel. Posisinya akan diatur di event.
         return [
-            'Nomor SP2D',
-            'Tanggal SP2D',
-            'Jenis SP2D',
-            'Keterangan',
-            'Nama CV/Penerima',
-            'Nama Instansi',
-            'Bruto',
-            'PPN',
-            'PPH 21',
-            'PPH 22',
-            'PPH 23',
-            'PPH 4',
-            'No BG',
-            'Rekening',
-            'Netto',
+            [],
+            [],
+            [
+                'No', 'Tanggal SP2D', 'Nomor SP2D', 'Jenis SP2D', 'Nama CV/Penerima',
+                'Nama Instansi', 'Bruto', 'PPN', 'PPH 21', 'PPH 22', 'PPH 23',
+                'PPH 4', 'Jumlah Potongan', 'Netto', 'No BG', 'No Rekening',
+            ],
+            []
         ];
     }
 
-    public function map($sp2d): array
+    public function styles(Worksheet $sheet): array
     {
+        // Style untuk header di BARIS 4
         return [
-            ' ' . $sp2d->nomor_sp2d,
-            Carbon::parse($sp2d->tanggal_sp2d)->format('d-m-Y'),
-            $sp2d->jenis_sp2d,
-            $sp2d->keterangan,
-            $sp2d->penerima->nama_penerima ?? 'N/A',
-            $sp2d->instansi->nama_instansi ?? 'N/A',
-            'Rp' . number_format((float)$sp2d->brutto, 2, ',', '.'),
-            'Rp' . number_format((float)$sp2d->ppn, 2, ',', '.'),
-            'Rp' . number_format((float)$sp2d->pph_21, 2, ',', '.'),
-            'Rp' . number_format((float)$sp2d->pph_22, 2, ',', '.'),
-            'Rp' . number_format((float)$sp2d->pph_23, 2, ',', '.'),
-            'Rp' . number_format((float)$sp2d->pph_4, 2, ',', '.'),
-            $sp2d->no_bg,
-            ' ' . $sp2d->no_rek,
-            'Rp' . number_format((float)$sp2d->netto, 2, ',', '.')
-        ];
-    }
-
-    public function styles(Worksheet $sheet)
-    {
-        $sheet->getStyle('A1:O1')->applyFromArray([
-            'font' => ['bold' => true, 'color' => ['argb' => '000000']],
-            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['argb' => 'FFC0CB'],
-            ],
-        ]);
-
-        $lastRow = $sheet->getHighestRow();
-        $sheet->getStyle('A1:O' . $lastRow)->applyFromArray([
-            'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-            ],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+            4 => [
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                 ],
             ],
-        ]);
+        ];
     }
 
     public function registerEvents(): array
     {
         return [
+            BeforeSheet::class => function (BeforeSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+                $sheet->setTitle($this->title());
+
+                // Judul Utama di baris 1-2
+                $sheet->mergeCells("A1:P2");
+                $sheet->setCellValue("A1", "REALISASI PENCAIRAN DANA SP2D NON GAJI TAHUN ANGGARAN " . date('Y'));
+                $sheet->getStyle("A1")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+
+                // Menyisipkan baris kosong di baris ke-3
+                $sheet->insertNewRowBefore(3, 1);
+            },
+
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $lastRow = $sheet->getHighestRow() + 3;
 
-                // ==================== TOTAL NETTO ====================
-                $sheet->setCellValue('N' . $lastRow, 'Total Netto Keseluruhan');
-                $totalNetto = SP2D::whereDate('created_at', $this->created_at)->sum('netto');
-                $sheet->setCellValue('O' . $lastRow, 'Rp' . number_format((float)$totalNetto, 2, ',', '.'));
-                $sheet->getStyle('N' . $lastRow . ':O' . $lastRow)->applyFromArray($this->totalStyle());
+                // Menyisipkan baris kosong di baris ke-5
+                $sheet->insertNewRowBefore(5, 1);
 
-                // ==================== TOTAL BRUTO ====================
-                $lastRow += 3;
-                $sheet->setCellValue('G' . $lastRow, 'Total Bruto Keseluruhan');
-                $totalBruto = SP2D::whereDate('created_at', $this->created_at)->sum('brutto');
-                $sheet->setCellValue('H' . $lastRow, 'Rp' . number_format((float)$totalBruto, 2, ',', '.'));
-                $sheet->getStyle('G' . $lastRow . ':H' . $lastRow)->applyFromArray($this->totalStyle());
+                $highestDataRow = $sheet->getHighestDataRow();
+                $currencyFormat = '"Rp"#,##0.00';
 
-                // ==================== TOTAL BRUTO PFK ====================
-                $lastRow += 3;
-                $sheet->setCellValue('G' . $lastRow, 'Total PFK');
-                $totalBrutoPFK = SP2D::whereDate('created_at', $this->created_at)
-                    ->where('jenis_sp2d', 'PFK')
-                    ->sum('brutto');
-                $sheet->setCellValue('H' . $lastRow, 'Rp' . number_format((float)$totalBrutoPFK, 2, ',', '.'));
-                $sheet->getStyle('G' . $lastRow . ':H' . $lastRow)->applyFromArray($this->totalStyle());
+                $sheet->getColumnDimension('A')->setWidth(5);
+                // Terapkan format mata uang ke kolom data (G sampai N) dari BARIS 6
+                $sheet->getStyle("G6:N{$highestDataRow}")->getNumberFormat()->setFormatCode($currencyFormat);
+                
+                // Summary Rows
+                $today = Carbon::parse($this->date);
+                $yesterday = $today->copy()->subDay();
+                $summaryStartRow = $highestDataRow + 2;
+                $summaryRowsData = [
+                    ['label' => 'Jumlah Tanggal ' . $today->format('d-m-Y'), 'data' => $this->totals['today'] ?? []],
+                    ['label' => 'Jumlah sebelumnya ' . $yesterday->format('d-m-Y'), 'data' => $this->totals['yesterday'] ?? []],
+                    ['label' => 'Jumlah s/d Tanggal ' . $today->format('d-m-Y'), 'data' => $this->totals['combined'] ?? []],
+                ];
 
-                // ==================== TOTAL PPN ====================
-                $lastRow += 3;
-                $sheet->setCellValue('I' . $lastRow, 'Total PPN Keseluruhan');
-                $totalPPN = SP2D::whereDate('created_at', $this->created_at)->sum('ppn');
-                $sheet->setCellValue('J' . $lastRow, 'Rp' . number_format((float)$totalPPN, 2, ',', '.'));
-                $sheet->getStyle('I' . $lastRow . ':J' . $lastRow)->applyFromArray($this->totalStyle());
+                $summaryRowCount = 0;
+                foreach ($summaryRowsData as $row) {
+                    if (empty($row['data'])) continue;
 
-                // ==================== TOTAL PPH 21 ====================
-                $lastRow += 2;
-                $sheet->setCellValue('I' . $lastRow, 'Total PPH 21 Keseluruhan');
-                $totalPPH21 = SP2D::whereDate('created_at', $this->created_at)->sum('pph_21');
-                $sheet->setCellValue('J' . $lastRow, 'Rp' . number_format((float)$totalPPH21, 2, ',', '.'));
-                $sheet->getStyle('I' . $lastRow . ':J' . $lastRow)->applyFromArray($this->totalStyle());
+                    $currentRow = $summaryStartRow + $summaryRowCount;
+                    $sheet->mergeCells("A{$currentRow}:F{$currentRow}");
+                    $sheet->setCellValue("A{$currentRow}", $row['label']);
 
-                // ==================== TOTAL PPH 22 ====================
-                $lastRow++;
-                $sheet->setCellValue('I' . $lastRow, 'Total PPH 22 Keseluruhan');
-                $totalPPH22 = SP2D::whereDate('created_at', $this->created_at)->sum('pph_22');
-                $sheet->setCellValue('J' . $lastRow, 'Rp' . number_format((float)$totalPPH22, 2, ',', '.'));
-                $sheet->getStyle('I' . $lastRow . ':J' . $lastRow)->applyFromArray($this->totalStyle());
+                    $sheet->getStyle("A{$currentRow}")->applyFromArray([
+                        'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],
+                    ]);
 
-                // ==================== TOTAL PPH 23 ====================
-                $lastRow++;
-                $sheet->setCellValue('I' . $lastRow, 'Total PPH 23 Keseluruhan');
-                $totalPPH23 = SP2D::whereDate('created_at', $this->created_at)->sum('pph_23');
-                $sheet->setCellValue('J' . $lastRow, 'Rp' . number_format((float)$totalPPH23, 2, ',', '.'));
-                $sheet->getStyle('I' . $lastRow . ':J' . $lastRow)->applyFromArray($this->totalStyle());
+                    // [PERBAIKAN] Mengisi sel total dengan angka murni
+                    $col = 'G';
+                    foreach (['brutto','ppn','pph_21','pph_22','pph_23','pph_4','jumlah_potongan','netto'] as $key) {
+                        $sheet->setCellValue("{$col}{$currentRow}", $row['data'][$key] ?? 0);
+                        $col++;
+                    }
+                    // Terapkan style dan format ke seluruh baris total
+                    $sheet->getStyle("G{$currentRow}:N{$currentRow}")->getNumberFormat()->setFormatCode($currencyFormat);
+                    $sheet->getStyle("G{$currentRow}:N{$currentRow}")->getFont()->setBold(true);
 
-                // ==================== TOTAL PPH 4 ====================
-                $lastRow++;
-                $sheet->setCellValue('I' . $lastRow, 'Total PPH 4 Keseluruhan');
-                $totalPPH4 = SP2D::whereDate('created_at', $this->created_at)->sum('pph_4');
-                $sheet->setCellValue('J' . $lastRow, 'Rp' . number_format((float)$totalPPH4, 2, ',', '.'));
-                $sheet->getStyle('I' . $lastRow . ':J' . $lastRow)->applyFromArray($this->totalStyle());
+                    $summaryRowCount++;
+                }
+
+                $borderStyle = [
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['argb' => 'FF000000'],
+                        ]
+                    ]
+                ];
+
+                // Sesuaikan border dengan layout baru
+                $sheet->getStyle("A4:P4")->applyFromArray($borderStyle); // Header
+                $sheet->getStyle("A6:P{$highestDataRow}")->applyFromArray($borderStyle); // Data
+
+                if ($summaryRowCount > 0) {
+                    $lastSummaryRow = $summaryStartRow + $summaryRowCount - 1;
+                    $sheet->getStyle("A{$summaryStartRow}:P{$lastSummaryRow}")->applyFromArray($borderStyle);
+                }
+
+                $ttdStartRow = ($summaryRowCount > 0 ? ($summaryStartRow + $summaryRowCount - 1) : $highestDataRow) + 3;
+
+                $sheet->mergeCells("M{$ttdStartRow}:P{$ttdStartRow}");
+                $sheet->setCellValue("M{$ttdStartRow}", 'KEPALA UPTD KAS DAERAH');
+
+                $sheet->mergeCells("M" . ($ttdStartRow + 4) . ":P" . ($ttdStartRow + 4));
+                $sheet->setCellValue("M" . ($ttdStartRow + 4), 'RM. Surya Utama Murad');
+
+                $sheet->mergeCells("M" . ($ttdStartRow + 5) . ":P" . ($ttdStartRow + 5));
+                $sheet->setCellValue("M" . ($ttdStartRow + 5), 'NIP. 198302122009031001');
+
+                $sheet->getStyle("M{$ttdStartRow}:P" . ($ttdStartRow + 5))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
             },
-        ];
-    }
-
-    private function totalStyle(): array
-    {
-        return [
-            'font' => ['bold' => true],
-            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['argb' => 'FFE4E1'],
-            ],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                ],
-            ],
         ];
     }
 }

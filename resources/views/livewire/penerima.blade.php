@@ -33,6 +33,7 @@
                     <tr>
                         <th scope="col">No</th>
                         <th scope="col">Nama CV/Penerima</th>
+                        <th scope="col">No Rekening</th>
                         <th scope="col">Aksi</th>
                     </tr>
                 </thead>
@@ -41,6 +42,7 @@
                         <tr>
                             <th scope="row" class="text-center">{{ $penerima->firstItem() + $index }}</th>
                             <td>{{ $p->nama_penerima }}</td>
+                            <td>{{ $p->no_rek }}</td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-info btn-sm me-1"
                                     wire:click="edit({{ $p->id }})" wire:target="edit({{ $p->id }})">

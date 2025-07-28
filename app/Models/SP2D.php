@@ -24,13 +24,19 @@ class SP2D extends Model
         'pph_23',
         'pph_4',
         'no_bg',
-        'no_rek',
         'id_user',
         'waktu_sesuai',
     ];
 
     protected $casts = [
         'waktu_sesuai' => 'datetime',
+        'brutto' => 'decimal:2',
+        'ppn' => 'decimal:2',
+        'pph_21' => 'decimal:2',
+        'pph_22' => 'decimal:2',
+        'pph_23' => 'decimal:2',
+        'pph_4' => 'decimal:2',
+        'netto' => 'decimal:2',
     ];
 
     public function users()

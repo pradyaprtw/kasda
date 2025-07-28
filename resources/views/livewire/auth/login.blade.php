@@ -36,10 +36,18 @@
                         </button>
                     </div>
                 </form>
-                <div class="text-center">
-                    <a href="{{ route('register') }}" class="text-primary">Tambah Akun</a>
+                <div class="d-flex justify-content-between">
+                    <div class="mb-3">
+                        <a href="{{ route('register') }}" class="btn btn-link">Tambah Akun</a>
+                    </div>
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-link" wire:click="$dispatch('openForgotPasswordModal')">
+                            Lupa Kata Sandi?
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    @livewire('auth.change-password')
 </div>
