@@ -18,6 +18,11 @@
                         <input type="text" class="form-control" id="nama_penerima" wire:model="nama_penerima"
                             required>
                     </div>
+                    <div class="mb-3">
+                        <label for="no_rek" class="form-label">No Rekening</label>
+                        <input type="text" class="form-control" id="no_rek" wire:model="no_rek"
+                            required>
+                    </div>
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">

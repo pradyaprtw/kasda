@@ -49,7 +49,7 @@
             <div class="container">
                 {{-- <img class="navbar-brand me-1" style="height: 40px; width: 40px" src="https://play-lh.googleusercontent.com/07QFXQhz0omkCq0O7Hy4h2y1kPII_ndxZDTsjNAxSUXJ-VxeOLUp_aiBlTRL7iYJIQ" alt="logo kota metro"> --}}
                 <a class="navbar-brand">
-                    Sistem Kas Daerah
+                    <strong class="text-primary" style="font-size: 20px">SIKAS </strong><small>(Sistem Kas Daerah)</small>
                 </a>
                 <ul class="navbar-nav ms-auto">
 

@@ -122,6 +122,14 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div class="mb-3">
+                                <label for="no_rek" class="form-label">No Rekening</label>
+                                <input type="text" class="form-control @error('no_rek') is-invalid @enderror"
+                                    id="no_rek" wire:model="no_rek" required>
+                                @error('no_rek')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                             <div class="mt-3 d-flex justify-content-end">
                                 <button type="button" class="btn btn-secondary me-2"
                                     wire:click="closeModal">Batal</button>

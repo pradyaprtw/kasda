@@ -18,6 +18,7 @@ class Penerima extends Component
 
     public $nama_penerima;
     public $id;
+    public $no_rek;
 
 
     protected $listeners = ['penerimaCreated' => '$refresh'];
@@ -34,6 +35,7 @@ class Penerima extends Component
 
         $this->id = $data->id;
         $this->nama_penerima = $data->nama_penerima;
+        $this->no_rek = $data->no_rek;
 
         $this->showEditModal = true;
 
@@ -44,6 +46,7 @@ class Penerima extends Component
     {
         $validatedData = $this->validate([
             'nama_penerima' => 'required|string',
+            'no_rek' => 'required|string',
         ]);
 
         if($this->id){
@@ -73,6 +76,7 @@ class Penerima extends Component
             ->orderBy('nama_penerima', 'asc')
             ->where(function ($query) {
                 $query->where('nama_penerima', 'like', '%' . $this->search . '%');
+                $query->orWhere('no_rek', 'like', '%' . $this->search . '%');
             })
             ->latest()
             ->paginate(10);
