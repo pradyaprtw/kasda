@@ -1,40 +1,39 @@
 <?php
 
-use App\Http\Controllers\DisplayController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\InstansiController;
-use App\Http\Controllers\PenerimaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\{
+    HomeController,
+    DisplayController,
+    InstansiController,
+    PenerimaController,
+    ExportController,
+    CleanupController
+};
 
+Auth::routes(['login' => false, 'register' => false, 'reset' => false]);
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-// Route::get('/', function () {
-//     return view('display-sp2d');
-// });
-
-Auth::routes(['login' => false, 'register' => false]);
-
+// Guest (Login & Register)
 Route::middleware('guest')->group(function () {
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
     Route::get('/', \App\Livewire\Auth\Login::class)->name('login');
+
 });
 
+// Authenticated Users
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/sp2d', [DisplayController::class, 'index'])->name('sp2d');
     Route::get('/penerima', [PenerimaController::class, 'index'])->name('penerima');
     Route::get('/instansi', [InstansiController::class, 'index'])->name('instansi');
-});
+    Route::post('/konfirmasi-hapus', [CleanupController::class, 'konfirmasiHapus'])->name('konfirmasi.hapus');
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    // Export routes
+    Route::prefix('export')->name('export.')->group(function () {
+        Route::get('/', [ExportController::class, 'index'])->name('index');
+        Route::get('/harian', [ExportController::class, 'exportExcel'])->name('harian');
+        Route::get('/bulanan', [ExportController::class, 'exportRekapExcel'])->name('bulanan');
+        Route::get('/mingguan', [ExportController::class, 'exportMingguan'])->name('mingguan');
+        Route::get('/tahunan', [ExportController::class, 'exportTahunan'])->name('tahunan');
+    });
+});

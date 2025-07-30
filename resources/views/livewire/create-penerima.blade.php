@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="createPenerimaLabel">Tambah Sp2d</h1>
+                <h1 class="modal-title fs-5" id="createPenerimaLabel">Tambah Penerima</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             {{-- Display success message --}}
@@ -16,6 +16,11 @@
                     <div class="mb-3">
                         <label for="nama_penerima" class="form-label">Nama CV/Penerima</label>
                         <input type="text" class="form-control" id="nama_penerima" wire:model="nama_penerima"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="no_rek" class="form-label">No Rekening</label>
+                        <input type="text" class="form-control" id="no_rek" wire:model="no_rek"
                             required>
                     </div>
                     <div class="d-flex justify-content-end">

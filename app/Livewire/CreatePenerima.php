@@ -9,6 +9,7 @@ class CreatePenerima extends Component
 {
 
     public $nama_penerima;
+    public $no_rek;
 
     public function render()
     {
@@ -18,11 +19,13 @@ class CreatePenerima extends Component
 
     public function resetInputFields(){
         $this->nama_penerima = '';
+        $this->no_rek = '';
     }
 
     public function store(){
         $rules = [
             'nama_penerima' => 'required|string|max:255',
+            'no_rek' => 'required|string|max:255',
         ];
         $validated = $this->validate($rules);
 
@@ -30,7 +33,7 @@ class CreatePenerima extends Component
         PenerimaModel::create($validated);
 
         $this->resetInputFields();
-        session()->flash('message', 'Data Penerima berhasil ditambahkan!');
+        session()->flash('message', 'Data penerima berhasil ditambahkan!');
         return redirect()->route('penerima');
     }
 

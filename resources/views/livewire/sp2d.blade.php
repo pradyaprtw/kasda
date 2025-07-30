@@ -1,40 +1,30 @@
 <div>
-    {{-- Success/Error Messages --}}
     @if (session()->has('message'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('message') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-
     {{-- ==================== FORM PENCARIAN ==================== --}}
     <div class="row mb-3">
         <div class="col-md-4">
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
                 <input type="text" wire:model.live.debounce.300ms="search" class="form-control"
-                    placeholder="Cari No. SP2D, Penerima, Instansi...">
+                    placeholder="Cari No. SP2D, Penerima, Instansi, Tanggal...">
             </div>
         </div>
     </div>
     {{-- ========================================================= --}}
 
-    <div class="my-3 p-3 bg-body rounded shadow-sm">
+    <div class="my-3 p-3 bg-body rounded shadow-sm border border-black">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle mb-0">
+            <table class="table w-100 table-bordered table-hover align-middle mb-0">
                 <thead class="table-dark text-center">
-                    <tr>
+                    <tr class="border border-white">
                         <th scope="col">No</th>
-                        <th scope="col">Nomor Sp2d</th>
-                        <th scope="col">Tanggal</th>
+                        <th scope="col">Nomor/Tanggal SP2D</th>
+                        <th scope="col">Tanggal Berkas Masuk</th>
                         <th scope="col">Jenis Sp2d</th>
                         <th scope="col">Keterangan</th>
                         <th scope="col">Nama CV/Penerima</th>
@@ -48,7 +38,6 @@
                         <th scope="col">PPH 4</th>
                         <th scope="col">No BG</th>
                         <th scope="col">Netto</th>
-                        {{-- <th scope="col">Petugas Input</th> --}}
                         <th scope="col">Status</th>
                         <th scope="col">Aksi</th>
                     </tr>
@@ -56,15 +45,21 @@
                 <tbody>
                     {{-- ==================== TAMPILKAN DATA SP2D ==================== --}}
                     @forelse ($sp2d as $index => $ds)
-                        <tr>
+                        <tr class="text-center border border-black">
+                            {{-- Menampilkan nomor urut baris berdasarkan halaman --}}
                             <th scope="row" class="text-center">{{ $sp2d->firstItem() + $index }}</th>
-                            <td>{{ $ds->nomor_sp2d }}</td>
-                            <td>{{ \Carbon\Carbon::parse($ds->tanggal_sp2d)->format('d/m/Y') }}</td>
+                            {{-- Menampilkan nomor SP2D dan tanggal SP2D dalam format 'dd-mm-yyyy' --}}
+                            <td>{{ $ds->nomor_sp2d . '/' . \Carbon\Carbon::parse($ds->tanggal_sp2d)->format('d-m-Y') }}
+                            </td>
+                            <td>{{ \Carbon\Carbon::parse($ds->created_at)->format('d-m-Y') }}</td>
                             <td>{{ $ds->jenis_sp2d }}</td>
                             <td>{{ $ds->keterangan }}</td>
                             <td>{{ $ds->penerima->nama_penerima ?? '-' }}</td>
                             <td>{{ $ds->instansi->nama_instansi ?? '-' }}</td>
-                            <td>{{ $ds->no_rek }}</td>
+                            <!-- =================================================================== -->
+                            <!-- PERBAIKAN UTAMA: Ambil no_rek dari relasi 'penerima' -->
+                            <!-- =================================================================== -->
+                            <td>{{ $ds->penerima->no_rek ?? '-' }}</td>
                             <td>Rp{{ number_format($ds->brutto, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($ds->ppn, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($ds->pph_21, 0, ',', '.') }}</td>
@@ -73,7 +68,6 @@
                             <td>Rp{{ number_format($ds->pph_4, 0, ',', '.') }}</td>
                             <td>{{ $ds->no_bg }}</td>
                             <td>Rp{{ number_format($ds->netto, 0, ',', '.') }}</td>
-                            {{-- <td>{{ $ds->users->name ?? '_' }}</td> --}}
                             <td class="text-center">
                                 @if (is_null($ds->waktu_sesuai))
                                     <div class="form-check d-flex justify-content-center">
@@ -93,7 +87,7 @@
                                     </span>
                                     <span class="text-danger">{{ auth()->user()->name }}</span>
                                     <small
-                                        class="d-block text-muted">{{ $ds->waktu_sesuai->timezone('Asia/Jakarta')->format('d/m/y H:i') }}</small>
+                                        class="d-block text-muted">{{ \Carbon\Carbon::parse($ds->waktu_sesuai)->timezone('Asia/Jakarta')->format('d/m/y H:i') }}</small>
                                     <br>
                                     <button type="button" class="btn btn-secondary btn-sm"
                                         wire:click="batalkanSesuai({{ $ds->id }})" wire:loading.attr="disabled"
@@ -107,22 +101,12 @@
                                     wire:click="edit({{ $ds->id }})" wire:loading.attr="disabled"
                                     wire:target="edit({{ $ds->id }})">
                                     <i class="bi bi-pencil-square me-1"></i> Edit
-                                    <span wire:loading.remove wire:target="edit({{ $ds->id }})">
-                                    </span>
-                                    <span wire:loading wire:target="edit({{ $ds->id }})">
-                                        <span class="spinner-border spinner-border-sm"></span>
-                                    </span>
                                 </button>
                                 <button type="button" class="btn btn-danger btn-sm mt-2"
                                     wire:click="delete({{ $ds->id }})"
                                     wire:confirm="Apakah Anda yakin ingin menghapus data ini?"
                                     wire:loading.attr="disabled" wire:target="delete({{ $ds->id }})">
                                     <i class="bi bi-trash me-1"></i> Hapus
-                                    <span wire:loading.remove wire:target="delete({{ $ds->id }})">
-                                    </span>
-                                    <span wire:loading wire:target="delete({{ $ds->id }})">
-                                        <span class="spinner-border spinner-border-sm"></span>
-                                    </span>
                                 </button>
                             </td>
                         </tr>
@@ -156,8 +140,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="editSp2dLabel">Edit SP2D</h1>
-                        <button type="button" class="btn-close" wire:click="closeModal"
-                            aria-label="Close"></button>
+                        <button type="button" class="btn-close" wire:click="closeModal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         @if (session()->has('message'))
@@ -167,15 +150,7 @@
                             </div>
                         @endif
 
-                        @if (session()->has('error'))
-                            <div class="alert alert-danger alert-dismissible fade show">
-                                {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        @endif
-
                         <form wire:submit.prevent="update">
-                            <input type="hidden" wire:model="id_user" value="{{ auth()->user()->id }}">
                             <div class="mb-3">
                                 <label class="form-label">Petugas</label>
                                 <input type="text" class="form-control" value="{{ auth()->user()->name }}"
@@ -184,23 +159,23 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="nomor_sp2d" class="form-label">Nomor SP2D</label>
-                                        <input type="text"
-                                            class="form-control @error('nomor_sp2d') is-invalid @enderror"
-                                            id="nomor_sp2d" wire:model="nomor_sp2d" required>
-                                        @error('nomor_sp2d')
+                                        <label for="tanggal_sp2d" class="form-label">Tanggal SP2D</label>
+                                        <input type="date"
+                                            class="form-control @error('tanggal_sp2d') is-invalid @enderror"
+                                            id="tanggal_sp2d" wire:model="tanggal_sp2d">
+                                        @error('tanggal_sp2d')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="tanggal_sp2d" class="form-label">Tanggal SP2D</label>
-                                        <input type="date"
-                                            class="form-control @error('tanggal_sp2d') is-invalid @enderror"
-                                            id="tanggal_sp2d" wire:model="tanggal_sp2d" required>
-                                        @error('tanggal_sp2d')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <label for="nomor_sp2d" class="form-label">Nomor SP2D</label>
+                                        <input type="text"
+                                            class="form-control @error('nomor_sp2d') is-invalid @enderror"
+                                            id="nomor_sp2d" wire:model="nomor_sp2d" required>
+                                        @error('nomor_sp2d')
+                                            <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -211,7 +186,7 @@
                                     <div class="mb-3">
                                         <label for="jenis_sp2d" class="form-label">Jenis SP2D</label>
                                         <select class="form-select @error('jenis_sp2d') is-invalid @enderror"
-                                            id="jenis_sp2d" wire:model="jenis_sp2d" required>
+                                            id="jenis_sp2d" wire:model="jenis_sp2d">
                                             <option value="">Pilih Jenis</option>
                                             <option value="GU">GU</option>
                                             <option value="UP">UP</option>
@@ -243,7 +218,6 @@
                                     <div class="mb-3" wire:ignore>
                                         <label for="edit-select-penerima" class="form-label">Nama CV/Penerima</label>
                                         <select id="edit-select-penerima" placeholder="Cari atau pilih penerima...">
-                                            <option value="">Cari atau pilih penerima...</option>
                                             @foreach ($penerima as $p)
                                                 <option value="{{ $p->id }}">{{ $p->nama_penerima }}</option>
                                             @endforeach
@@ -255,9 +229,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3" wire:ignore>
-                                        <label for="edit-select-instansi" class="form-label">Instansi</label>
+                                        <label for="edit-select-instansi" class="form-label">Nama Instansi</label>
                                         <select id="edit-select-instansi" placeholder="Cari atau pilih instansi">
-                                            <option value="">Cari atau Pilih Instansi</option>
                                             @foreach ($instansi as $i)
                                                 <option value="{{ $i->id }}">{{ $i->nama_instansi }}</option>
                                             @endforeach
@@ -277,7 +250,7 @@
                                             class="form-control @error('no_bg') is-invalid @enderror" id="no_bg"
                                             wire:model="no_bg" required>
                                         @error('no_bg')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -286,7 +259,7 @@
                                         <label for="no_rek" class="form-label">No Rekening</label>
                                         <input type="text"
                                             class="form-control @error('no_rek') is-invalid @enderror" id="no_rek"
-                                            wire:model="no_rek" required>
+                                            wire:model="no_rek">
                                         @error('no_rek')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -294,13 +267,14 @@
                                 </div>
                             </div>
 
+                            <!-- Sisanya form keuangan (brutto, ppn, dll.) tetap sama -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="brutto" class="form-label">Brutto</label>
                                         <input type="number" step="0.01"
                                             class="form-control @error('brutto') is-invalid @enderror" id="brutto"
-                                            wire:model="brutto" required>
+                                            wire:model="brutto">
                                         @error('brutto')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -318,7 +292,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="mb-3">

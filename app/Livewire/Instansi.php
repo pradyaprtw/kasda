@@ -49,7 +49,7 @@ class Instansi extends Component
         if($this->id){
             $instansi = InstansiModel::find($this->id);
             $instansi->update($validatedData);
-            session()->flash('message', 'Data Instansi berhasil diperbarui!');
+            session()->flash('message', 'Data instansi berhasil diperbarui!');
             $this->closeModal();
         }
     }
@@ -57,7 +57,7 @@ class Instansi extends Component
     public function delete($id)
     {
         InstansiModel::find($id)->delete();
-        session()->flash('message', 'Data berhasil dihapus!');
+        session()->flash('message', 'Data instansi berhasil dihapus!');
     }
 
     public function closeModal()
@@ -70,6 +70,7 @@ class Instansi extends Component
     public function render()
     {
         $instansi = InstansiModel::query()
+            ->orderBy('nama_instansi', 'asc')
             ->where(function ($query) {
                 $query->where('nama_instansi', 'like', '%' . $this->search . '%');
             })

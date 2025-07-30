@@ -12,6 +12,7 @@ class Penerima extends Model
     protected $table = 'penerima';
     protected $fillable = [
         'nama_penerima',
+        'no_rek',
     ];
 
 }

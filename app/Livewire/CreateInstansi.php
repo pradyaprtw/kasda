@@ -28,7 +28,7 @@ class CreateInstansi extends Component
         \App\Models\Instansi::create($validated);
 
         $this->resetInputFields();
-        session()->flash('message', 'Data Instansi berhasil ditambahkan!');
+        session()->flash('message', 'Data instansi berhasil ditambahkan!');
         return redirect()->route('instansi');
     }
 

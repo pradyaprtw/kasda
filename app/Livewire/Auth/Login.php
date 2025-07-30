@@ -6,10 +6,13 @@ use Livewire\Component;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DataCleanupLog;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class Login extends Component
 {
-    public $email;
+    public $username;
     public $password;
 
     public function render()
@@ -20,7 +23,7 @@ class Login extends Component
     public function rules()
     {
         return [
-            'email' => 'required|email|max:255',
+            'username' => 'required|string|max:255',
             'password' => 'required|string|min:8',
         ];
     }
@@ -29,12 +32,32 @@ class Login extends Component
     {
         $this->validate();
 
-        if (auth()->attempt(['email' => $this->email, 'password' => $this->password], true)) {
-            return redirect()->intended();
+        // Coba cari user berdasarkan username
+        $user = \App\Models\User::where('username', $this->username)->first();
+
+        if (!$user) {
+            session()->flash('error', 'Username tidak ditemukan.');
+            return;
         }
 
-        return redirect()->to(RouteServiceProvider::HOME)
-            ->withErrors(['email' => 'The provided credentials do not match our records.'])
-            ->withInput(['email' => $this->email]);
+        if (!Hash::check($this->password, $user->password)) {
+            session()->flash('error', 'Password salah.');
+            return;
+        }
+
+        // Kalau semua cocok, login
+        Auth::login($user, true);
+        return redirect()->intended();
+    }
+
+    public function authenticated(Request $request, $user)
+    {
+        $recentCleanup = DataCleanupLog::whereDate('deleted_at', '>=', now()->subWeek())->latest()->first();
+
+        if ($recentCleanup) {
+            session()->flash('info', '📢 Data sebelum ' . $recentCleanup->deleted_before->format('d M Y') . ' telah dihapus otomatis.');
+        }
+
+        return redirect()->intended($this->redirectPath());
     }
 }

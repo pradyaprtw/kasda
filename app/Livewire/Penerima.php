@@ -18,6 +18,7 @@ class Penerima extends Component
 
     public $nama_penerima;
     public $id;
+    public $no_rek;
 
 
     protected $listeners = ['penerimaCreated' => '$refresh'];
@@ -34,6 +35,7 @@ class Penerima extends Component
 
         $this->id = $data->id;
         $this->nama_penerima = $data->nama_penerima;
+        $this->no_rek = $data->no_rek;
 
         $this->showEditModal = true;
 
@@ -44,12 +46,13 @@ class Penerima extends Component
     {
         $validatedData = $this->validate([
             'nama_penerima' => 'required|string',
+            'no_rek' => 'required|string',
         ]);
 
         if($this->id){
             $penerima = PenerimaModel::find($this->id);
             $penerima->update($validatedData);
-            session()->flash('message', 'Data Penerima berhasil diperbarui!');
+            session()->flash('message', 'Data penerima berhasil diperbarui!');
             $this->closeModal();
         }
     }
@@ -57,7 +60,7 @@ class Penerima extends Component
     public function delete($id)
     {
         PenerimaModel::find($id)->delete();
-        session()->flash('message', 'Data berhasil dihapus!');
+        session()->flash('message', 'Data penerima berhasil dihapus!');
     }
 
     public function closeModal()
@@ -70,8 +73,10 @@ class Penerima extends Component
     public function render()
     {
         $penerima = PenerimaModel::query()
+            ->orderBy('nama_penerima', 'asc')
             ->where(function ($query) {
                 $query->where('nama_penerima', 'like', '%' . $this->search . '%');
+                $query->orWhere('no_rek', 'like', '%' . $this->search . '%');
             })
             ->latest()
             ->paginate(10);

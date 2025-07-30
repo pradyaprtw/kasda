@@ -33,6 +33,7 @@
                     <tr>
                         <th scope="col">No</th>
                         <th scope="col">Nama CV/Penerima</th>
+                        <th scope="col">No Rekening</th>
                         <th scope="col">Aksi</th>
                     </tr>
                 </thead>
@@ -41,6 +42,7 @@
                         <tr>
                             <th scope="row" class="text-center">{{ $penerima->firstItem() + $index }}</th>
                             <td>{{ $p->nama_penerima }}</td>
+                            <td>{{ $p->no_rek }}</td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-info btn-sm me-1"
                                     wire:click="edit({{ $p->id }})" wire:target="edit({{ $p->id }})">
@@ -117,6 +119,14 @@
                                 <input type="text" class="form-control @error('nama_penerima') is-invalid @enderror"
                                     id="nama_penerima" wire:model="nama_penerima" required>
                                 @error('nama_penerima')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <label for="no_rek" class="form-label">No Rekening</label>
+                                <input type="text" class="form-control @error('no_rek') is-invalid @enderror"
+                                    id="no_rek" wire:model="no_rek" required>
+                                @error('no_rek')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

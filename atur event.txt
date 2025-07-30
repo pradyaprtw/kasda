@@ -1,0 +1,20 @@
+DELETE FROM `sp2d` WHERE `created_at` <= NOW() - INTERVAL 5 YEAR;
+
+Langkah-langkah di phpMyAdmin:
+
+1. Buka form "Add event" seperti sebelumnya.
+
+2. Di dalam kotak teks besar "Definition", masukkan perintah di atas.
+
+Untuk jadwalnya (On schedule), Anda bisa mengaturnya untuk berjalan EVERY 1 DAY. Ini adalah praktik yang baik, karena setiap hari server akan memeriksa dan membersihkan data lama secara berkala, sehingga beban kerjanya tidak menumpuk.
+
+
+Event name: Beri nama yang jelas, misalnya hapus_sp2d_oktober_tahunan.
+
+On schedule: Pilih EVERY.
+
+Isi angka 1 dan pilih YEAR dari dropdown.
+
+Start (Opsional tapi disarankan): Anda bisa mengatur kapan event ini pertama kali dijalankan. Misalnya, atur ke tanggal 1 Januari tahun depan agar proses penghapusan pertama terjadi di awal tahun.
+
+Status: Pastikan terpilih ENABLED.

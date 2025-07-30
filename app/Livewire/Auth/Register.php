@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 class Register extends Component
 {
     public $name;
-    public $email;
+    public $username;
     public $password;
     public $password_confirmation;
 
@@ -24,9 +24,9 @@ class Register extends Component
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => [
+            'username' => [
                 'required',
-                'email',
+                'string',
                 'max:255',
                 Rule::unique(User::class),
             ],
@@ -40,7 +40,7 @@ class Register extends Component
 
         $user = User::create([
             'name' => $this->name,
-            'email' => $this->email,
+            'username' => $this->username,
             'password' => bcrypt($this->password),
         ]);
         auth()->login($user, true);

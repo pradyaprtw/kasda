@@ -7,13 +7,13 @@ use App\Models\Penerima;
 use App\Models\SP2D;
 use App\Models\User;
 use Livewire\Component;
+use App\Livewire\Sp2d as Sp2dList;
 
 class CreateSp2d extends Component
 {
     public $instansi;
     public $penerima;
     public $users;
-   
 
     public $nomor_sp2d;
     public $tanggal_sp2d;
@@ -28,11 +28,12 @@ class CreateSp2d extends Component
     public $pph_23;
     public $pph_4;
     public $no_bg;
-    public $no_rek;
     public $id_user;
-    // public $netto;
-  
-    
+    public $no_rek;
+
+    // --- DIHAPUS: Listener ini tidak diperlukan di komponen ini ---
+    // protected $listeners = ['sp2dCreated' => '$refresh'];
+
     public function render()
     {
         return view('livewire.create-sp2d');
@@ -40,86 +41,88 @@ class CreateSp2d extends Component
 
     public function mount()
     {
-        $this->instansi = Instansi::all();
-        $this->penerima = Penerima::all();
-        $this->users = User::all();
-
+        $this->instansi = Instansi::select('id', 'nama_instansi')->get();
+        $this->penerima = Penerima::select('id', 'nama_penerima', 'no_rek')->get();
+        $this->users = User::select('id', 'name')->get();
     }
 
-    
-    private function resetInputFields(){
+    public function updatedIdPenerima($penerimaId)
+    {
+        $selectedPenerima = Penerima::find($penerimaId);
+        if ($selectedPenerima) {
+            $this->no_rek = $selectedPenerima->no_rek;
+        } else {
+            $this->no_rek = '';
+        }
+    }
+
+    private function resetInputFields()
+    {
         $this->nomor_sp2d = '';
         $this->tanggal_sp2d = '';
         $this->jenis_sp2d = '';
         $this->keterangan = '';
         $this->id_penerima = '';
         $this->id_instansi = '';
-        $this->brutto = ''; 
+        $this->brutto = '';
         $this->ppn = '';
         $this->pph_21 = '';
         $this->pph_22 = '';
         $this->pph_23 = '';
         $this->pph_4 = '';
         $this->no_bg = '';
-        $this->no_rek = '';
         $this->id_user = '';
-        // $this->dispatch('reset-tom-select');
-        
+        $this->no_rek = '';
+
+        $this->dispatch('reset-select2');
     }
 
-    public function store(){
-        $rules = [
-            'nomor_sp2d' => 'required|string|max:255',
-            'tanggal_sp2d' => 'required|date',
-            'jenis_sp2d' => 'required|string|max:255',
-            'keterangan' => 'nullable|string|max:255',
-            'id_penerima' => 'required|exists:penerima,id',
-            'id_instansi' => 'required|exists:instansi,id',
-            'brutto' => 'required|numeric|min:0',
-            'ppn' => 'nullable|numeric|min:0',
-            'pph_21' => 'nullable|numeric|min:0',
-            'pph_22' => 'nullable|numeric|min:0',
-            'pph_23' => 'nullable|numeric|min:0',
-            'pph_4' => 'nullable|numeric|min:0',
-            'no_bg' => 'nullable|numeric',
-            'no_rek' => 'nullable|string|max:255',
-            'id_user' => 'nullable|exists:users,id',
-        ];
-        $validated = $this->validate($rules);
-        // dd($validated);
+    public function store()
+    {
+        if (!is_numeric($this->id_penerima)) {
+            $this->validate([
+                'id_penerima' => 'required|string|unique:penerima,nama_penerima',
+                'no_rek' => 'required|string|max:255'
+            ], [
+                'id_penerima.unique' => 'Nama penerima ini sudah ada.'
+            ]);
 
-        // Cek apakah nomor_sp2d sudah ada
-        if (\App\Models\SP2D::where('nomor_sp2d', $validated['nomor_sp2d'])->exists()) {
-            session()->flash('error', 'Nomor SP2D sudah ada, silakan gunakan nomor lain.');
-            return;
+            $newPenerima = Penerima::create([
+                'nama_penerima' => $this->id_penerima,
+                'no_rek' => $this->no_rek,
+            ]);
+            $this->id_penerima = $newPenerima->id;
         }
 
-        // Cek apakah nomor_bg sudah ada
-        if (\App\Models\SP2D::where('no_bg', $validated['no_bg'])->exists()) {
-            session()->flash('error', 'Nomor BG sudah ada, silakan gunakan nomor lain.');
-            return;
-        }
+        $validatedSp2dData = $this->validate(
+            [
+                'tanggal_sp2d' => 'required|date',
+                'jenis_sp2d' => 'required|string|max:255',
+                'keterangan' => 'nullable|string|max:255',
+                'id_penerima' => 'required|exists:penerima,id',
+                'id_instansi' => 'required|exists:instansi,id',
+                'brutto' => 'required|numeric|min:0',
+                'ppn' => 'nullable|numeric',
+                'pph_21' => 'nullable|numeric',
+                'pph_22' => 'nullable|numeric',
+                'pph_23' => 'nullable|numeric',
+                'pph_4' => 'nullable|numeric',
+                'id_user' => 'nullable|exists:users,id',
+                'nomor_sp2d' => 'required|string|unique:sp2d,nomor_sp2d',
+                'no_bg' => 'nullable|string|unique:sp2d,no_bg',
+            ],
+            [
+                'nomor_sp2d.unique' => 'Nomor SP2D ini sudah ada.',
+                'no_bg.unique' => 'Nomor BG ini sudah ada.',
+            ]
+        );
 
-        $validated['id_user'] = auth()->id();
-        SP2D::create($validated);
+        $validatedSp2dData['id_user'] = auth()->id();
 
+        SP2D::create($validatedSp2dData);
 
-        $this->resetInputFields();
         session()->flash('message', 'Data SP2D berhasil ditambahkan!');
-        return redirect()->route('sp2d');
-
-
-        // try {
-        //     SP2D::create($validated);
-        //     $this->resetInputFields();
-        //     session()->flash('message', 'Data SP2D berhasil ditambahkan!');
-            
-        //     // Emit event untuk refresh komponen lain jika perlu
-        //     $this->dispatch('sp2dCreated');
-            
-        //     return redirect()->route('sp2d');
-        // } catch (\Exception $e) {
-        //     session()->flash('error', 'Gagal menyimpan data: ' . $e->getMessage());
-        // }
+        $this->dispatch('sp2dCreated')->to(Sp2dList::class);
+        $this->resetInputFields();
     }
 }
