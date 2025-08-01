@@ -37,7 +37,7 @@
                     </div>
                 </form>
                 <div class="d-flex justify-content-between">
-                    <div class="mb-3">
+                   <div class="mb-3">
                         <a href="{{ route('register') }}" class="btn btn-link">Tambah Akun</a>
                     </div>
                     <div class="mb-3">

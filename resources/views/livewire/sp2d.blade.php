@@ -32,6 +32,8 @@
                         <th scope="col">No Rek</th>
                         <th scope="col">Bruto</th>
                         <th scope="col">PPN</th>
+                        <th scope="col">IWP 8%</th>
+                        <th scope="col">IWP 1%</th>
                         <th scope="col">PPH 21</th>
                         <th scope="col">PPH 22</th>
                         <th scope="col">PPH 23</th>
@@ -62,6 +64,8 @@
                             <td>{{ $ds->penerima->no_rek ?? '-' }}</td>
                             <td>Rp{{ number_format($ds->brutto, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($ds->ppn, 0, ',', '.') }}</td>
+                            <td>Rp{{ number_format($ds->iuran_wajib, 0, ',', '.') }}</td>
+                            <td>Rp{{ number_format($ds->iuran_wajib_2, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($ds->pph_21, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($ds->pph_22, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($ds->pph_23, 0, ',', '.') }}</td>
@@ -290,6 +294,28 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="iuran_wajib" class="form-label">IWP (8%)</label>
+                                        <input type="number" step="0.01" class="form-control" id="iuran_wajib"
+                                            wire:model="iuran_wajib" required>
+                                    </div>
+                                    @error('iuran_wajib')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="iuran_wajib_2" class="form-label">IWP (1%)</label>
+                                        <input type="number" step="0.01" class="form-control" id="iuran_wajib_2"
+                                            wire:model="iuran_wajib_2" required>
+                                    </div>
+                                    @error('iuran_wajib')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="row">

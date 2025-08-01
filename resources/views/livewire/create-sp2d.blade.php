@@ -46,7 +46,8 @@
                             <option value="UP">UP</option>
                             <option value="LS">LS</option>
                             <option value="TU">TU</option>
-                            <option value="gaji">Gaji</option>
+                            <option value="LS-Gaji">LS-Gaji</option>
+                            <option value="LS-Gaji PPPK">LS-Gaji PPPK</option>
                             <option value="PFK">PFK</option>
                         </select>
                         @error('jenis_sp2d')
@@ -135,6 +136,28 @@
                         <label for="ppn" class="form-label">PPN</label>
                         <input type="number" step="0.01" class="form-control" id="ppn" wire:model="ppn">
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="iuran_wajib" class="form-label">IWP (8%)</label>
+                        <input type="number" step="0.01" class="form-control" id="iuran_wajib"
+                            wire:model="iuran_wajib" required>
+                    </div>
+                    @error('iuran_wajib')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="iuran_wajib_2" class="form-label">IWP (1%)</label>
+                        <input type="number" step="0.01" class="form-control" id="iuran_wajib_2"
+                            wire:model="iuran_wajib_2" required>
+                    </div>
+                    @error('iuran_wajib')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
             <div class="row">
