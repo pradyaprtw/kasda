@@ -44,4 +44,49 @@ class TotalsHelper
             })->sum('brutto'),
         ];
     }
+
+    /**
+     * Helper untuk mengambil dan menjumlahkan total untuk satu hari spesifik.
+     * [BARU] Menggantikan getTotalsForDateRange untuk menyederhanakan logika.
+     *
+     * @param Carbon $date
+     * @param array $jenisSp2d
+     * @return array
+     */
+    private function getTotalsForDay(Carbon $date, array $jenisSp2d): array
+    {
+        $totals = Sp2d::whereIn('jenis_sp2d', $jenisSp2d)
+                     ->whereDate('created_at', $date) // Kueri hanya untuk satu tanggal
+                     ->selectRaw(
+                         "SUM(brutto) as brutto, " .
+                         "SUM(pph_21) as pph_21, " .
+                         "SUM(iuran_wajib) as iuran_wajib, " .
+                         "SUM(iuran_wajib_2) as iuran_wajib_2, " .
+                         "SUM(netto) as netto"
+                     )->first();
+
+        // Jika tidak ada data, kembalikan array dengan nilai nol agar penjumlahan tidak error.
+        if (!$totals || is_null($totals->brutto)) {
+            return [
+                'brutto'          => 0.0,
+                'pph_21'          => 0.0,
+                'iuran_wajib'     => 0.0,
+                'iuran_wajib_2'   => 0.0,
+                'jumlah_potongan' => 0.0,
+                'netto'           => 0.0,
+            ];
+        }
+
+        $jumlah_potongan = $totals->pph_21 + $totals->iuran_wajib + $totals->iuran_wajib_2;
+
+        // Kembalikan hasil dengan tipe data yang benar.
+        return [
+            'brutto'          => (float)$totals->brutto,
+            'pph_21'          => (float)$totals->pph_21,
+            'iuran_wajib'     => (float)$totals->iuran_wajib,
+            'iuran_wajib_2'   => (float)$totals->iuran_wajib_2,
+            'jumlah_potongan' => (float)$jumlah_potongan,
+            'netto'           => (float)$totals->netto,
+        ];
+    }
 }

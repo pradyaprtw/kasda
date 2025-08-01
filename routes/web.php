@@ -32,8 +32,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('export')->name('export.')->group(function () {
         Route::get('/', [ExportController::class, 'index'])->name('index');
         Route::get('/harian', [ExportController::class, 'exportExcel'])->name('harian');
+        Route::get('/gaji', [ExportController::class, 'exportGajiExcel'])->name('gaji');
         Route::get('/bulanan', [ExportController::class, 'exportRekapExcel'])->name('bulanan');
         Route::get('/mingguan', [ExportController::class, 'exportMingguan'])->name('mingguan');
         Route::get('/tahunan', [ExportController::class, 'exportTahunan'])->name('tahunan');
+        Route::get('/pajak', [ExportController::class, 'exportPajakExcel'])->name('pajak');
     });
 });

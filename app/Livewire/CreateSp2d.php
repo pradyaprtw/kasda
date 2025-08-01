@@ -27,6 +27,8 @@ class CreateSp2d extends Component
     public $pph_22;
     public $pph_23;
     public $pph_4;
+    public $iuran_wajib;
+    public $iuran_wajib_2;
     public $no_bg;
     public $id_user;
     public $no_rek;
@@ -70,6 +72,8 @@ class CreateSp2d extends Component
         $this->pph_22 = '';
         $this->pph_23 = '';
         $this->pph_4 = '';
+        $this->iuran_wajib = '';
+        $this->iuran_wajib_2 = '';
         $this->no_bg = '';
         $this->id_user = '';
         $this->no_rek = '';
@@ -107,15 +111,22 @@ class CreateSp2d extends Component
                 'pph_22' => 'nullable|numeric',
                 'pph_23' => 'nullable|numeric',
                 'pph_4' => 'nullable|numeric',
+                'iuran_wajib' => 'nullable|numeric',
+                'iuran_wajib_2' => 'nullable|numeric',
                 'id_user' => 'nullable|exists:users,id',
                 'nomor_sp2d' => 'required|string|unique:sp2d,nomor_sp2d',
                 'no_bg' => 'nullable|string|unique:sp2d,no_bg',
+
             ],
             [
                 'nomor_sp2d.unique' => 'Nomor SP2D ini sudah ada.',
                 'no_bg.unique' => 'Nomor BG ini sudah ada.',
             ]
         );
+
+        foreach (['ppn', 'pph_21', 'pph_22', 'pph_23', 'pph_4', 'iuran_wajib', 'iuran_wajib_2'] as $field) {
+            $this->$field = $this->$field === '' ? null : $this->$field;
+        }
 
         $validatedSp2dData['id_user'] = auth()->id();
 

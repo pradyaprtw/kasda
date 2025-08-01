@@ -18,7 +18,7 @@ return new class extends Migration
             // Info SP2D
             $table->string('nomor_sp2d')->unique();
             $table->date('tanggal_sp2d');
-            $table->enum('jenis_sp2d', ['GU', 'UP', 'LS', 'TU', 'gaji', 'PFK']);
+            $table->enum('jenis_sp2d', ['GU', 'UP', 'LS', 'TU', 'LS-Gaji', 'LS-Gaji PPPK', 'PFK']);
             $table->string('keterangan')->nullable();
 
             // Relasi
@@ -32,14 +32,16 @@ return new class extends Migration
             $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade')->nullable();
 
             // Keuangan
-            $table->string('no_rek');
-            $table->decimal('brutto', 20, 2);
-            $table->decimal('ppn', 20, 2)->default(0)->nullable();
-            $table->decimal('pph_21', 20, 2)->default(0)->nullable();
-            $table->decimal('pph_22', 20, 2)->default(0)->nullable();
-            $table->decimal('pph_23', 20, 2)->default(0)->nullable();
-            $table->decimal('pph_4', 20, 2)->default(0)->nullable();
+            $table->float('brutto', 20, 2);
+            $table->float('ppn', 20, 2)->nullable();
+            $table->float('pph_21', 20, 2)->nullable();
+            $table->float('pph_22', 20, 2)->nullable();
+            $table->float('pph_23', 20, 2)->nullable();
+            $table->float('pph_4', 20, 2)->nullable();
             $table->string('no_bg', 20, 0)->unique();
+            $table->float('iuran_wajib', 20, 2)->nullable();
+            $table->float('iuran_wajib_2')->nullable();
+
             $table->timestamp('waktu_sesuai')->nullable();
 
             $table->timestamps(); // created_at, updated_at
@@ -48,8 +50,8 @@ return new class extends Migration
         // Add generated column after table creation
         DB::statement("
             ALTER TABLE `sp2d` 
-            ADD COLUMN `netto` DECIMAL(20, 2) 
-            GENERATED ALWAYS AS (brutto - (IFNULL(ppn, 0) + IFNULL(pph_21, 0) + IFNULL(pph_22, 0) + IFNULL(pph_23, 0) + IFNULL(pph_4, 0))) STORED
+            ADD COLUMN `netto` float(20, 2) 
+            GENERATED ALWAYS AS (brutto - (IFNULL(ppn, 0) + IFNULL(pph_21, 0) + IFNULL(pph_22, 0) + IFNULL(pph_23, 0) + IFNULL(pph_4, 0) + IFNULL(iuran_wajib, 0) + IFNULL(iuran_wajib_2, 0))) STORED
         ");
     }
 

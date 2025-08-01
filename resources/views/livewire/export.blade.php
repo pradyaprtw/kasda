@@ -116,6 +116,34 @@
                         </form>
                     </div>
                 </div>
+
+                {{-- Export Gaji --}}
+                <div class="col">
+                    <div class="p-4 border rounded-3 h-100 shadow-sm">
+                        <form action="{{ route('export.gaji') }}" method="GET">
+                            <h5 class="mb-3">📅 Export Gaji</h5>
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" class="form-control mb-3 border-dark" name="created_at" required>
+                            <button type="submit" class="btn btn-outline-success w-100">
+                                <i class="bi bi-cloud-arrow-down me-1"></i> Export Gaji
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                {{-- Export Pajak --}}
+                <div class="col">
+                    <div class="p-4 border rounded-3 h-100 shadow-sm">
+                        <form action="{{ route('export.pajak') }}" method="GET">
+                            <h5 class="mb-3">📅 Export Pajak</h5>
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" class="form-control mb-3 border-dark" name="created_at" required>
+                            <button type="submit" class="btn btn-outline-success w-100">
+                                <i class="bi bi-cloud-arrow-down me-1"></i> Export Pajak
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

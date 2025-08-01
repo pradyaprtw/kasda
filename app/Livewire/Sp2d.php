@@ -25,7 +25,7 @@ class Sp2d extends Component
     public $search = '';
 
     public $id; // This will hold the ID of the SP2D being edited
-    public $nomor_sp2d, $tanggal_sp2d, $jenis_sp2d, $keterangan, $id_penerima, $id_instansi, $brutto, $ppn, $pph_21, $pph_22, $pph_23, $pph_4, $no_bg, $id_user;
+    public $nomor_sp2d, $tanggal_sp2d, $jenis_sp2d, $keterangan, $id_penerima, $id_instansi, $brutto, $ppn, $pph_21, $pph_22, $pph_23, $pph_4, $iuran_wajib, $iuran_wajib_2, $no_bg, $id_user;
     public $no_rek;
 
     // Properti untuk mengisi dropdown
@@ -78,6 +78,8 @@ class Sp2d extends Component
         $this->pph_22 = $data->pph_22;
         $this->pph_23 = $data->pph_23;
         $this->pph_4 = $data->pph_4;
+        $this->iuran_wajib = $data->iuran_wajib;
+        $this->iuran_wajib_2 = $data->iuran_wajib_2;
         $this->no_bg = $data->no_bg;
         $this->id_user = $data->id_user;
         $this->no_rek = $data->penerima->no_rek ?? '';
@@ -96,11 +98,14 @@ class Sp2d extends Component
                 'id_instansi' => 'required|exists:instansi,id',
                 'id_penerima' => 'required|exists:penerima,id',
                 'brutto' => 'required|numeric|min:0',
-                'ppn' => 'nullable|numeric|min:0',
-                'pph_21' => 'nullable|numeric|min:0',
-                'pph_22' => 'nullable|numeric|min:0',
-                'pph_23' => 'nullable|numeric|min:0',
-                'pph_4' => 'nullable|numeric|min:0',
+                'ppn' => 'nullable|numeric',
+                'pph_21' => 'nullable|numeric',
+                'pph_22' => 'nullable|numeric',
+                'pph_23' => 'nullable|numeric',
+                'pph_4' => 'nullable|numeric',
+                'iuran_wajib' => 'nullable|numeric',
+                'iuran_wajib_2' => 'nullable|numeric',
+
                 'nomor_sp2d' => [
                     'required',
                     'string',
@@ -123,7 +128,7 @@ class Sp2d extends Component
             $penerima = Penerima::find($this->id_penerima);
 
             if ($sp2d && $penerima) {
-                $numericFields = ['ppn', 'pph_21', 'pph_22', 'pph_23', 'pph_4'];
+                $numericFields = ['ppn', 'pph_21', 'pph_22', 'pph_23', 'pph_4', 'iuran_wajib', 'iuran_wajib_2'];
                 foreach ($numericFields as $field) {
                     if (isset($validatedSp2dData[$field]) && $validatedSp2dData[$field] === '') {
                         $validatedSp2dData[$field] = null;
@@ -229,6 +234,8 @@ class Sp2d extends Component
             'pph_22',
             'pph_23',
             'pph_4',
+            'iuran_wajib',
+            'iuran_wajib_2',
             'no_bg',
             'waktu_sesuai',
             'netto'
